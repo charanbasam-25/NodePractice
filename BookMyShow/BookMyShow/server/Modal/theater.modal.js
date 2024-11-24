@@ -21,6 +21,7 @@ const theaterSchema = new Schema(
     isActive: {
       type: Boolean,
       required: true,
+      default:false,
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,

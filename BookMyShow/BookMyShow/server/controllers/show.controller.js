@@ -52,7 +52,7 @@ export const deleteShow= async(req,res)=>{
 }
 export const getShowById= async(req,res)=>{
     try{
-        const showDetail = await Show.findById(req.params.showId).populate("theater");
+        const showDetail = await Show.findById(req.params.showId).populate(["theater","movie"]);
         console.log(showDetail,"showDetial--------")
         res.send({
             success:true,
@@ -66,8 +66,23 @@ export const getShowById= async(req,res)=>{
         })
     }
 }
-export const getShowByFilter= async(req,res)=>{
+export const getShowByFilter= async (req,res)=>{
     try{
+        const{ movie , theater, date}= req.query;
+        console.log(theater,movie,date,"MVD--------")
+        const filter={}
+        if(movie){
+            filter.movie= movie;
+        }
+        if(theater){
+            filter.theater= theater;
+        }
+        if(date){
+            filter.date= date;
+        }
+
+        const showDetails= await Show.find(filter);
+        res.status(200).send(showDetails);
 
     }
     catch(e){

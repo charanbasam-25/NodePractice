@@ -72,3 +72,4 @@ export const deleteTheater = async (req, res) => {
     console.log(e, "---Error");
   }
 };
+

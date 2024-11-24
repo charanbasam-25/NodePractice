@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post("/", authMiddleware, istheaterOwner, addShow);
 router.put("/:showId",authMiddleware,istheaterOwner,updateShow);
-router.delete("/:showId",authMiddleware,deleteShow);
+router.delete("/:showId",authMiddleware,istheaterOwner,deleteShow);
 router.get("/:showId", getShowById);
 router.get('/',getShowByFilter)
 

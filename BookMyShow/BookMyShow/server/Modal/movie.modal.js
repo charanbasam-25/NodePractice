@@ -20,7 +20,7 @@ const movieSchema = new Schema(
       enum: ["Thriller", "Action", "Fantasy"],
       required: true,
     },
-    langauge: {
+    language: {
       type: [String],
       enum: ["English", "Hindi", "Telugu", "Kannada"],
       required: true,

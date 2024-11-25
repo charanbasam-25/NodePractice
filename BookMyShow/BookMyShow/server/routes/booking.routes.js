@@ -1,11 +1,18 @@
 import express from 'express';
 import authMiddleware from '../middleware/auth.middleware.js';
-import { createBooking, getBooking, makePayment } from '../controllers/booking.controller.js';
+import { createBooking, getBookingDetail, makePayment } from '../controllers/booking.controller.js';
+
 const router = express.Router();
 
+router.post('/create-checkout', makePayment);
 
-router.post("/make-payment", authMiddleware, makePayment);
-router.post("/", authMiddleware, createBooking);
-router.post("/", authMiddleware, getBooking);
+// Create Booking
+router.post('/confirm', authMiddleware, createBooking);
+
+// Get Booking details
+router.get('/', authMiddleware, getBookingDetail);
+
+
+
 
 export default router;

@@ -12,11 +12,11 @@ const bookingSchema = new Schema(
       required: true,
     },
     seats: {
-      type: [Strings],
+      type: [String],
       required: true,
     },
     show: {
-      type: Mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "shows",
       required: true,
     },

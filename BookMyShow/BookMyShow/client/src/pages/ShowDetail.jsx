@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useTransition } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { jtwToken } from "../constants/authToken";
-// import { stripePromise } from "../App";
-// import { Elements } from "@stripe/react-stripe-js";
+import { stripePromise } from "../App";
+import { Elements } from "@stripe/react-stripe-js";
 
-// import CheckoutForm from "./CheckoutForm";
+import CheckoutForm from "./CheckoutForm";
 
 const ShowPage = () => {
   const { showId } = useParams();
@@ -14,9 +14,9 @@ const ShowPage = () => {
   let [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-//   const appearance = {
-//     theme: "stripe",
-//   };
+  const appearance = {
+    theme: "stripe",
+  };
 
   const handleSeatChange = (e) => {
     setSelectedSeats(Number(e.target.value));
@@ -25,7 +25,7 @@ const ShowPage = () => {
   const handleBookSeats = () => {
     // Implement booking logic here
     // Create PaymentIntent as soon as the page loads
-    fetch("http://localhost:5000/api/booking/get-payment-secret", {
+    fetch("http://localhost:5000/api/booking/create-checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json", jwttoken: jtwToken },
       body: JSON.stringify({
@@ -59,7 +59,7 @@ const ShowPage = () => {
     const transactionId = searchParams.get("payment_intent");
 
     if (transactionId) {
-      fetch("http://localhost:5000/api/booking/confirm", {
+      fetch("http://localhost:5010/api/booking/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json", jwttoken: jtwToken },
         body: JSON.stringify({
@@ -79,7 +79,7 @@ const ShowPage = () => {
         <h2 className="text-2xl font-bold mb-6">Show Details</h2>
         <div className="mb-6">
           <h3 className="text-xl font-semibold mb-2">
-            Theatre: {show.theater?.name}
+            Theatre: {show.theatre?.name}
           </h3>
           <p className="text-gray-700 mb-2">
             <strong>Movie:</strong> {show.movie?.title}
@@ -127,17 +127,17 @@ const ShowPage = () => {
           </button>
         </div>
 
-        {/* {clientSecret && (
+        {clientSecret && (
           <Elements
             options={{
               clientSecret,
-            //   appearance,
+              appearance,
             }}
             stripe={stripePromise}
           >
             <CheckoutForm successUrl={window.location.href} />
           </Elements>
-        )} */}
+        )}
       </div>
     </div>
   );

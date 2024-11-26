@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/create-checkout', makePayment);
 
 // Create Booking
-router.post('/confirm', authMiddleware, createBooking);
+router.post('/confirm',authMiddleware, createBooking);
 
 // Get Booking details
 router.get('/', authMiddleware, getBookingDetail);

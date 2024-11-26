@@ -17,12 +17,23 @@ const movieSchema = new Schema(
     },
     genre: {
       type: [String],
-      enum: ["Thriller", "Action", "Fantasy"],
+      enum: [
+        "Thriller",
+        "Action",
+        "Fantasy",
+        "Comedy",
+        "Drama",
+        "Romance",
+        "Adventure",
+        "Period",
+        "Animation",
+        "Family"
+      ],
       required: true,
     },
     language: {
       type: [String],
-      enum: ["English", "Hindi", "Telugu", "Kannada"],
+      enum: ["English", "Hindi", "Telugu", "Kannada", "Malayalam", "Bengali"],
       required: true,
     },
     releaseDate: {

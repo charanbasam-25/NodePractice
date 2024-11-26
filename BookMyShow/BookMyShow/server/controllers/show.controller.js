@@ -56,7 +56,7 @@ export const getShowById = async (req, res) => {
       "theater",
       "movie",
     ]);
-    console.log(showDetail, "showDetial--------");
+    // console.log(showDetail, "showDetial--------");
     res.send(showDetail);
   } catch (e) {
     res.status(500).send({
@@ -68,7 +68,6 @@ export const getShowById = async (req, res) => {
 export const getShowByFilter = async (req, res) => {
   try {
     const { movie, theater, date } = req.query;
-    console.log(theater, movie, date, "MVD--------");
     const filter = {};
     if (movie) {
       filter.movie = movie;

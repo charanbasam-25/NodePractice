@@ -13,6 +13,7 @@ export const getUserById = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
+  console.log(process.env.jwt_secret_salt,"consoel.------")
   try {
     const userData = req.body;
     const newUserData = await User.create(userData);
@@ -57,7 +58,8 @@ export const login = async (req, res) => {
         userData.password,
         user.password
       );
-      console.log(process.env.jwt_secret_salt,"jwttoke----")
+      console.log(userData,user,"user----------")
+      console.log(process.env.jwt_secret_salt,"jwttoken--on-login----")
       if (isValidPassoword) {
         const jwtToken = jwt.sign(
           {
@@ -66,8 +68,9 @@ export const login = async (req, res) => {
             isadmin:user.isadmin,
           },
           process.env.jwt_secret_salt,
-          { expiresIn: "1d" }
+          { expiresIn: "2d" }
         );
+        console.log(jwtToken,"JwtToken-login------")
         res.setHeader("jwtToken", jwtToken);
         return res.status(200).send({
           status: true,

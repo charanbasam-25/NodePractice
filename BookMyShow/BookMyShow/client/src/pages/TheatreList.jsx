@@ -90,7 +90,7 @@ const TheatreList = () => {
             </tr>
           </thead>
           <tbody>
-            {theaters.map((theater, index) => (
+            {theaters?.map((theater, index) => (
               <tr key={index}>
                 <td className="py-2 px-4 border-b border-gray-200">{theater.name}</td>
                 <td className="py-2 px-4 border-b border-gray-200">{theater.location}</td>

@@ -31,7 +31,7 @@ const userScehma = new Schema(
 );
 
 userScehma.pre("save", async function (next) {
-  console.log(this, "thisss");
+  console.log(this, "thisss--usermodal");
   const user = this;
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(user.password, salt);
@@ -47,3 +47,5 @@ userScehma.pre("save", async function (next) {
 const User = model("users", userScehma);
 
 export default User;
+
+

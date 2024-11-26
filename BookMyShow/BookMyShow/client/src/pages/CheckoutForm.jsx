@@ -11,6 +11,7 @@ export default function CheckoutForm({ successUrl }) {
 
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  console.log(successUrl,"successsUrl-------")
 
   useEffect(() => {
     if (!stripe) {
@@ -20,7 +21,7 @@ export default function CheckoutForm({ successUrl }) {
     const clientSecret = new URLSearchParams(window.location.search).get(
       "payment_intent_client_secret"
     );
-
+    console.log(clientSecret,"cliensecret--------")
     if (!clientSecret) {
       return;
     }
@@ -47,6 +48,7 @@ export default function CheckoutForm({ successUrl }) {
     e.preventDefault();
 
     if (!stripe || !elements) {
+      debugger
       // Stripe.js hasn't yet loaded.
       // Make sure to disable form submission until Stripe.js has loaded.
       return;
@@ -61,7 +63,7 @@ export default function CheckoutForm({ successUrl }) {
         return_url: successUrl,
       },
     });
-
+    console.log(error,"errrorrr------")
     // This point will only be reached if there is an immediate error when
     // confirming the payment. Otherwise, your customer will be redirected to
     // your `return_url`. For some payment methods like iDEAL, your customer will

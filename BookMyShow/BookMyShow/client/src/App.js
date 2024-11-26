@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
+import Bookings from './pages/Bookings';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import MovieList from './pages/MovieList';
@@ -31,6 +32,7 @@ function App() {
 
           <Route path="/owner/theaters" element={<TheatreList />} />
           <Route path="/owner/theaters/:theaterId/shows" element={<ShowsList />} /> 
+          <Route path="/profile/bookings" element={<Bookings />} />
         </Routes>
       </div>
     </Router>

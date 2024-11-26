@@ -57,9 +57,10 @@ const ShowPage = () => {
     // Call confirm booking API
 
     const transactionId = searchParams.get("payment_intent");
-
+    console.log(transactionId,"transactionid----------")
     if (transactionId) {
-      fetch("http://localhost:5010/api/booking/confirm", {
+      console.log("Inside transactionId---------")
+      fetch("http://localhost:5000/api/booking/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json", jwttoken: jtwToken },
         body: JSON.stringify({
@@ -79,7 +80,7 @@ const ShowPage = () => {
         <h2 className="text-2xl font-bold mb-6">Show Details</h2>
         <div className="mb-6">
           <h3 className="text-xl font-semibold mb-2">
-            Theatre: {show.theatre?.name}
+            Theatre: {show.theater?.name}
           </h3>
           <p className="text-gray-700 mb-2">
             <strong>Movie:</strong> {show.movie?.title}

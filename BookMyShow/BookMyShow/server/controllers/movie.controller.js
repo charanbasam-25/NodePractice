@@ -2,9 +2,11 @@ import Movie from "../Modal/movie.modal.js";
 
 export const addMovie = async (req, res) => {
   try {
+    console.log(req.body,"body-0-------")
     const newMovie = new Movie(req.body);
     newMovie.owner = req.user.id;
     const movieDetails = await newMovie.save();
+    console.log(movieDetails,"moviedetails-----")
     return res.status(200).send(movieDetails);
   } catch (e) {
     console.error("Error in addMovie:", e);
@@ -58,11 +60,10 @@ res.status(200).send(movieData);
 };
 export const deleteMovie = async (req, res) => {
   try {
-    const movieData= Movie.findById(req.params.movieId);
-    res.status(200).send({
-        success:true,
-        Message:"Deleted Successfully",
-        ...movieData
+    await Movie.findByIdAndDelete(req.params.movieId);
+    res.send({
+        success: true,
+        message:"Sucessfully Deleted"
     });
   } catch (e) {
     res.status(500).send({

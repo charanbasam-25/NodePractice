@@ -12,14 +12,14 @@ const MovieList = () => {
     description: "",
     genre: [],
     language: [],
-    releaseData: "",
+    releaseDate: "",
     duration: "",
   });
 
   const handleInputChange = (e) => {
     let { name, value } = e.target;
     if (name === "genre" || name === "language") {
-      value = value.split(",");
+      value = value.split(",").map(item => item.trim());
     }
     setNewMovie({ ...newMovie, [name]: value });
   };
@@ -46,7 +46,7 @@ const MovieList = () => {
           description: "",
           genre: [],
           language: [],
-          releaseData: "",
+          releaseDate: "",
           duration: "",
         });
         setModalIsOpen(false);
@@ -122,7 +122,7 @@ const MovieList = () => {
                   {movie.language?.join(", ")}
                 </td>
                 <td className="py-2 px-4 border-b border-gray-200">
-                  {moment(movie.releaseData).format("DD-MM-YYYY")}
+                  {moment(movie.releaseDate).format("DD-MM-YYYY")}
                 </td>
                 <td className="py-2 px-4 border-b border-gray-200">
                   {movie.duration} min
@@ -236,8 +236,8 @@ const MovieList = () => {
             <input
               type="date"
               id="releaseDate"
-              name="releaseData"
-              value={newMovie.releaseData}
+              name="releaseDate"
+              value={newMovie.releaseDate}
               onChange={handleInputChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />

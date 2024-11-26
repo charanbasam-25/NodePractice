@@ -32,16 +32,7 @@ app.use(express.json());
 // CORS configuration (Allow requests only from React frontend)
 const allowedOrigins = ['http://localhost:3000', 'https://checkout.stripe.com'];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true); // Allow the origin
-    } else {
-      callback(new Error('Not allowed by CORS')); // Block the origin
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-}));
+app.use(cors());
 // Routes
 app.use('/api/user', UserRoutes);
 app.use("/api/theater", TheaterRoutes);

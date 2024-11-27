@@ -1,7 +1,7 @@
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import { jtwToken } from "../constants/authToken";
+
 
 const MovieList = () => {
   const [movies, setMovies] = useState([]);
@@ -15,6 +15,10 @@ const MovieList = () => {
     releaseDate: "",
     duration: "",
   });
+  let jwtToken=""
+  if(localStorage.getItem('jwtToken')){
+     jwtToken= localStorage.getItem('jwtToken');
+  }
 
   const handleInputChange = (e) => {
     let { name, value } = e.target;
@@ -31,7 +35,7 @@ const MovieList = () => {
       body: JSON.stringify(newMovie),
       headers: {
         "Content-Type": "application/json",
-        jwttoken: jtwToken,
+        jwttoken: jwtToken,
       },
     })
       .then((res) => res.json())
@@ -59,7 +63,7 @@ const MovieList = () => {
   useEffect(() => {
     fetch("http://localhost:5000/api/movie", {
       headers: {
-        jwttoken: jtwToken,
+        jwttoken: jwtToken,
       },
     })
       .then((res) => res.json())
@@ -67,7 +71,7 @@ const MovieList = () => {
   }, []);
 
   return (
-    <div className="min-h-screen p-4 bg-gray-100">
+    <div className="min-h-screen p-4 bg-lightgold">
       <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-6">Movies</h2>
         <div className="mb-4 flex justify-between items-center">
@@ -78,53 +82,53 @@ const MovieList = () => {
           />
           <button
             onClick={() => setModalIsOpen(true)}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Add Movie
           </button>
         </div>
         <table className="min-w-full bg-white">
           <thead>
-            <tr>
-              <th className="py-2 px-4 border-b border-gray-200">Poster</th>
-              <th className="py-2 px-4 border-b border-gray-200">Title</th>
-              <th className="py-2 px-4 border-b border-gray-200">
+            <tr  className="border-b-2 border-maroon"> 
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Poster</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Title</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">
                 Description
               </th>
-              <th className="py-2 px-4 border-b border-gray-200">Genres</th>
-              <th className="py-2 px-4 border-b border-gray-200">Languages</th>
-              <th className="py-2 px-4 border-b border-gray-200">
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Genres</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Languages</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">
                 Release Date
               </th>
-              <th className="py-2 px-4 border-b border-gray-200">Duration</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Duration</th>
             </tr>
           </thead>
           <tbody>
             {movies.map((movie, index) => (
               <tr key={index}>
-                <td className="py-2 px-4 border-b border-gray-200">
+                <td className="py-2 px-4 border-b border-gray-200 text-center">
                   <img
                     src={movie.poster}
                     alt={movie.title}
                     className="w-12 h-12"
                   />
                 </td>
-                <td className="py-2 px-4 border-b border-gray-200">
+                <td className="py-2 px-4 border-b border-gray-200 text-center">
                   {movie.title}
                 </td>
-                <td className="py-2 px-4 border-b border-gray-200">
+                <td className="py-2 px-4 border-b border-gray-200 text-center">
                   {movie.description}
                 </td>
-                <td className="py-2 px-4 border-b border-gray-200">
+                <td className="py-2 px-4 border-b border-gray-200 text-center">
                   {movie.genre?.join(", ")}
                 </td>
-                <td className="py-2 px-4 border-b border-gray-200">
+                <td className="py-2 px-4 border-b border-gray-200 text-center">
                   {movie.language?.join(", ")}
                 </td>
-                <td className="py-2 px-4 border-b border-gray-200">
+                <td className="py-2 px-4 border-b border-gray-200 text-center">
                   {moment(movie.releaseDate).format("DD-MM-YYYY")}
                 </td>
-                <td className="py-2 px-4 border-b border-gray-200">
+                <td className="py-2 px-4 border-b border-gray-200 text-center">
                   {movie.duration} min
                 </td>
               </tr>
@@ -263,13 +267,13 @@ const MovieList = () => {
             <button
               type="button"
               onClick={() => setModalIsOpen(false)}
-              className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded"
+              className="bg-lightgold hover:text-white text-maroon py-2 px-4 rounded"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded"
             >
               Add Movie
             </button>

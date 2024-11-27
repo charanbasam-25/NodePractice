@@ -8,18 +8,21 @@ import BookingRoutes from './routes/booking.routes.js'
 import env from 'dotenv';
 import cors from 'cors';
 import Stripe from 'stripe'
-// import nodemailer  from 'nodemailer';
+import nodemailer  from 'nodemailer';
+import cookieParser from 'cookie-parser';
+
+
+
 
 env.config();
 
-// export const transporter = nodemailer.createTransport({
-//     host: "smtp.mandrillapp.com",
-//     port: 587,
-//     auth: {
-//         user: 'xyz@gmail.com',
-//         pass: process.env.mailchimp_key
-//     }
-// })
+export const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.email_user,
+        pass: process.env.email_pass
+    }
+})
 
 const app = express();
 
@@ -28,6 +31,7 @@ app.set('view engine', 'ejs');
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 
 // CORS configuration (Allow requests only from React frontend)
 const allowedOrigins = ['http://localhost:3000', 'https://checkout.stripe.com'];

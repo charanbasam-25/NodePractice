@@ -5,7 +5,7 @@ import {
   useElements
 } from "@stripe/react-stripe-js";
 
-export default function CheckoutForm({ successUrl }) {
+export default function CheckoutForm({ successUrl, clientSecret }) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -18,9 +18,9 @@ export default function CheckoutForm({ successUrl }) {
       return;
     }
 
-    const clientSecret = new URLSearchParams(window.location.search).get(
-      "payment_intent_client_secret"
-    );
+    // const clientSecret = new URLSearchParams(window.location.search).get(
+    //   "payment_intent_client_secret"
+    // );
     console.log(clientSecret,"cliensecret--------")
     if (!clientSecret) {
       return;

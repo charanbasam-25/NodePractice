@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
-import { jtwToken } from "../constants/authToken";
 import { Link } from "react-router-dom";
+import Cookies from 'js-cookie';
 
 const itemsPerPage = 9;
 
@@ -22,11 +22,12 @@ const Home = () => {
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
-
+  const jwtToken = Cookies.get('jwtToken');
+  console.log(jwtToken,"show----------")
   useEffect(() => {
     fetch("http://localhost:5000/api/movie", {
       headers: {
-        jwttoken: jtwToken,
+        jwttoken: jwtToken,
       },
     })
       .then((res) => res.json())
@@ -34,65 +35,65 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen p-4 bg-gray-100">
-      <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-6">Movies</h2>
+    <div className="min-h-screen bg-lightgold p-4">
+      <div className="max-w-7xl mx-auto bg-maroon p-8 rounded-xl shadow-lg">
+        <h2 className="text-3xl font-semibold text-gray-800 mb-6 font-merriweather ">Movies</h2>
+        
         <input
           type="text"
           placeholder="Search for movies"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-6"
+          className="shadow-sm border-2 border-gray-300 rounded-lg w-full py-3 px-4 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6"
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {displayMovies.map((movie) => (
-            <Link to={`/movie/${movie._id}`}>
-              <div
-                key={movie._id}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
-              >
+            <Link key={movie._id} to={`/movie/${movie._id}`}>
+              <div className="bg-lightgold p-2 rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105">
                 <img
                   src={movie.poster}
                   alt={movie.title}
-                  className="w-full h-48 object-cover"
+                  className="w-full h-56 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110"
                 />
                 <div className="p-4">
-                  <h3 className="text-xl font-semibold mb-2">{movie.title}</h3>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">{movie.title}</h3>
                   <p className="text-gray-600">{movie?.language?.join(", ")}</p>
                 </div>
               </div>
             </Link>
           ))}
         </div>
-        <div className="mt-6 flex justify-center">
-          <ReactPaginate
-            previousLabel={"Previous"}
-            nextLabel={"Next"}
-            breakLabel={"..."}
-            pageCount={Math.ceil(filteredMovies.length / itemsPerPage)}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageClick}
-            containerClassName={"flex space-x-2"}
-            pageClassName={"page-item"}
-            pageLinkClassName={
-              "px-4 py-2 bg-white border border-gray-300 rounded-full text-sm leading-tight text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            }
-            previousClassName={
-              "page-item disabled cursor-not-allowed px-3 py-2 bg-gray-200 border border-gray-300 rounded-full text-gray-400"
-            }
-            previousLinkClassName={"page-link text-gray-400 cursor-not-allowed"}
-            nextClassName={
-              "page-item disabled cursor-not-allowed px-3 py-2 bg-gray-200 border border-gray-300 rounded-full text-gray-400"
-            }
-            nextLinkClassName={"page-link text-gray-400 cursor-not-allowed"}
-            breakClassName={"page-item"}
-            breakLinkClassName={
-              "px-3 py-1.5 bg-white border border-gray-300 rounded-full text-gray-700"
-            }
-            activeClassName={"bg-blue-600 text-white font-semibold"}
-          />
-        </div>
+        <div className="mt-8 flex justify-center">
+  <ReactPaginate
+    previousLabel={<span className="text-lg font-semibold">←</span>}
+    nextLabel={<span className="text-lg font-semibold">→</span>}
+    breakLabel={"..."}
+    pageCount={Math.ceil(filteredMovies.length / itemsPerPage)}
+    marginPagesDisplayed={2}
+    pageRangeDisplayed={5}
+    onPageChange={handlePageClick}
+    containerClassName={"flex items-center space-x-3"}
+    pageClassName={"page-item"}
+    pageLinkClassName={
+      "px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-md text-sm transition-all duration-300 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    }
+    previousClassName={
+      "page-item disabled cursor-not-allowed px-3 py-2 bg-gray-300 text-gray-500 border border-gray-400 rounded-md"
+    }
+    previousLinkClassName={"page-link"}
+    nextClassName={
+      "page-item disabled cursor-not-allowed px-3 py-2 bg-gray-300 text-gray-500 border border-gray-400 rounded-md"
+    }
+    nextLinkClassName={"page-link"}
+    breakClassName={"page-item"}
+    breakLinkClassName={
+      "px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-md text-sm"
+    }
+    activeClassName={"bg-blue-600 text-white font-bold border-blue-600"}
+  />
+</div>
+
       </div>
     </div>
   );

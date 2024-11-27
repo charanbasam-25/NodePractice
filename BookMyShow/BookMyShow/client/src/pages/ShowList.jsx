@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useLocation, useParams } from 'react-router-dom';
-import { jtwToken } from '../constants/authToken';
-import moment from "moment";
 
+import moment from "moment";
+import Cookies from 'js-cookie';
 
 const ShowsList = () => {
   const [shows, setShows] = useState([]);
@@ -11,7 +11,7 @@ const ShowsList = () => {
   const { theaterId } = useParams();
   const [movies, setMovies] = useState([]);
   const [newShow, setNewShow] = useState({
-    name: '',
+  name: '',
     movie: '',
     theater: theaterId,
     date: '',
@@ -34,7 +34,7 @@ const ShowsList = () => {
       body: JSON.stringify(newShow),
       headers: {
         "Content-Type": "application/json",
-        jwttoken: jtwToken
+        jwttoken: jwtToken
       },
     })
       .then((res) => res.json())
@@ -55,11 +55,15 @@ const ShowsList = () => {
         window.alert(e.message);
       });
   };
+  let jwtToken=""
+  if(localStorage.getItem('jwtToken')){
+     jwtToken= localStorage.getItem('jwtToken');
+  }
 
   useEffect(() => {
     fetch(`http://localhost:5000/api/show?theater=${theaterId}`, {
       headers: {
-        jwttoken: jtwToken
+        jwttoken: jwtToken
       },
     })
       .then((res) => res.json())
@@ -67,7 +71,7 @@ const ShowsList = () => {
 
     fetch("http://localhost:5000/api/movie", {
         headers: {
-          jwttoken: jtwToken
+          jwttoken: jwtToken
         },
       })
         .then((res) => res.json())
@@ -76,7 +80,7 @@ const ShowsList = () => {
 
 
   return (
-    <div className="min-h-screen p-4 bg-gray-100">
+    <div className="min-h-screen p-4 bg-lightgold">
       <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-6">Shows</h2>
         <div className="mb-4 flex justify-between items-center">
@@ -88,7 +92,7 @@ const ShowsList = () => {
           {location.pathname.startsWith('/owner') && (
             <button
                 onClick={() => setModalIsOpen(true)}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
                 Add Show
             </button>
@@ -97,35 +101,35 @@ const ShowsList = () => {
         <table className="min-w-full bg-white">
           <thead>
             <tr>
-              <th className="py-2 px-4 border-b border-gray-200">Name</th>
-              <th className="py-2 px-4 border-b border-gray-200">Movie</th>
-              <th className="py-2 px-4 border-b border-gray-200">Date</th>
-              <th className="py-2 px-4 border-b border-gray-200">Time</th>
-              <th className="py-2 px-4 border-b border-gray-200">Total Seats</th>
-              <th className="py-2 px-4 border-b border-gray-200">Price</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Name</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Movie</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Date</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Time</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Total Seats</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Price</th>
               {location.pathname.startsWith('/owner') && (
-                <th className="py-2 px-4 border-b border-gray-200">Actions</th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">Actions</th>
               )}
             </tr>
           </thead>
           <tbody>
             {shows.map((show, index) => (
               <tr key={index}>
-                <td className="py-2 px-4 border-b border-gray-200">{show.name}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{movies.find(movie =>  movie._id === show.movie)?.title}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{moment(show.date).format('DD-MM-YYYY')}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{show.time}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{show.totalSeats}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{show.ticketPrice}</td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">{show.name}</td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">{movies.find(movie =>  movie._id === show.movie)?.title}</td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">{moment(show.date).format('DD-MM-YYYY')}</td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">{show.time}</td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">{show.totalSeats}</td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">{show.ticketPrice}</td>
                 {location.pathname.startsWith('/owner') && (
-                  <td className="py-2 px-4 border-b border-gray-200 flex space-x-2">
+                  <td className="py-2 px-4 border-b border-gray-200 text-center flex space-x-2">
                     <button
-                      className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     >
                       Edit
                     </button>
                     <button
-                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     >
                       Delete
                     </button>
@@ -240,14 +244,14 @@ const ShowsList = () => {
             <button
               type="button"
               onClick={handleAddShow}
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Add Show
             </button>
             <button
               type="button"
               onClick={() => setModalIsOpen(false)}
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Cancel
             </button>

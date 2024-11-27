@@ -3,6 +3,7 @@ import Booking from "../Modal/booking.modal.js";
 import Stripe from 'stripe';
 import dotenv from 'dotenv';
 import {stripe} from '../index.js'
+import {transporter}  from '../index.js'
 // const stripe = new Stripe(process.env.stripe_secret_key);
 
 
@@ -79,13 +80,15 @@ export const createBooking = async (req, res) => {
     booking.user = req.user.id;
     await booking.save();
 
-    // const info = await transporter.sendMail({
-    //   from: '"Chirag Goel" <xyz@gmail.com>', // sender address
-    //   to: "x@gmail.com, y@gmail.com", // list of receivers
-    //   subject: "Booking is confirmed", // Subject line
-    //   text: "Hello world?", // plain text body
-    //   html: "<b>Hello world?</b>", // html body
-    // });
+    const info = await transporter.sendMail({
+      from: '"Charan Kumar" <charanfrondev@gmail.com>', // sender address
+      to: req.user.email, // list of receivers
+      subject: "Booking is confirmed", // Subject line
+      text: "Booking Got Confirmed. Have Fun", // plain text body
+      html: "<b>Yayyyy!!!  Your Booking is confirmed</b>", // html body
+    });
+
+    console.log(info,"info-------")
 
     res.send({
       success: true,

@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 const authMiddleware= function (req,res,next){
     try{
-        const jwtToken= req.get('jwttoken');
+        const jwtToken = req.get('jwtToken');
         console.log(jwtToken,process.env.jwt_secret_salt,"jwttokem---------")
         const userData= jwt.verify(jwtToken, process.env.jwt_secret_salt);
         console.log(userData, "userdataa---")

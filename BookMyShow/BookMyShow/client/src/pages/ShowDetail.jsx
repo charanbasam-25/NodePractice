@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useTransition } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { jtwToken } from "../constants/authToken";
-import { stripePromise } from "../App";
+
+import { stripePromise } from "../App.js";
 import { Elements } from "@stripe/react-stripe-js";
 
 import CheckoutForm from "./CheckoutForm";
@@ -21,13 +21,17 @@ const ShowPage = () => {
   const handleSeatChange = (e) => {
     setSelectedSeats(Number(e.target.value));
   };
+  let jwtToken=""
+  if(localStorage.getItem('jwtToken')){
+     jwtToken= localStorage.getItem('jwtToken');
+  }
 
   const handleBookSeats = () => {
     // Implement booking logic here
     // Create PaymentIntent as soon as the page loads
     fetch("http://localhost:5000/api/booking/create-checkout", {
       method: "POST",
-      headers: { "Content-Type": "application/json", jwttoken: jtwToken },
+      headers: { "Content-Type": "application/json", jwttoken: jwtToken },
       body: JSON.stringify({
         seats: selectedSeats,
         price: show.ticketPrice,
@@ -38,10 +42,11 @@ const ShowPage = () => {
       .then((data) => setClientSecret(data.clientSecret));
   };
 
+
   useEffect(() => {
     fetch(`http://localhost:5000/api/show/${showId}`, {
       headers: {
-        jwttoken: jtwToken,
+        jwttoken: jwtToken,
       },
     })
       .then((res) => res.json())
@@ -57,12 +62,11 @@ const ShowPage = () => {
     // Call confirm booking API
 
     const transactionId = searchParams.get("payment_intent");
-    console.log(transactionId,"transactionid----------")
     if (transactionId) {
       console.log("Inside transactionId---------")
       fetch("http://localhost:5000/api/booking/confirm", {
         method: "POST",
-        headers: { "Content-Type": "application/json", jwttoken: jtwToken },
+        headers: { "Content-Type": "application/json", jwttoken: jwtToken },
         body: JSON.stringify({
           transactionId: searchParams.get("payment_intent"),
         }),
@@ -75,7 +79,7 @@ const ShowPage = () => {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen p-4 bg-gray-100">
+    <div className="min-h-screen p-4 bg-lightgold">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-6">Show Details</h2>
         <div className="mb-6">
@@ -122,7 +126,7 @@ const ShowPage = () => {
           </select>
           <button
             onClick={handleBookSeats}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Book Seat
           </button>
@@ -136,7 +140,7 @@ const ShowPage = () => {
             }}
             stripe={stripePromise}
           >
-            <CheckoutForm successUrl={window.location.href} />
+            <CheckoutForm successUrl={window.location.href}  clientSecret={clientSecret} />
           </Elements>
         )}
       </div>

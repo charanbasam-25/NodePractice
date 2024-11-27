@@ -22,11 +22,17 @@ password:{
 },
 });
 
-userScehma.pre('save',function(next){
-    console.log(this,"thisss")
-    this.password= this.password+"--encrypted";
+userSchema.pre("save", async function (next) {
+    try {
+      const user = this;
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(user.password, salt);
+      user.password = hashedPassword;
+    } catch (e) {
+      console.log(e);
+    }
     next();
-});
+  });
 userScehma.post('save', function(doc){
     console.log(this,"thisss");
     this.password= this.password+"--encrypted";

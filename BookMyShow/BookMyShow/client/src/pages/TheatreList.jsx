@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { jtwToken } from '../constants/authToken';
+
 
 const TheatreList = () => {
   const [theaters, setTheatres] = useState([]);
@@ -20,6 +20,10 @@ const TheatreList = () => {
     const { name, value } = e.target;
     setNewTheatre({ ...newTheatre, [name]: value });
   };
+  let jwtToken=""
+  if(localStorage.getItem('jwtToken')){
+     jwtToken= localStorage.getItem('jwtToken');
+  }
 
   const handleAddTheatre = (e) => {
     e.preventDefault();
@@ -28,7 +32,7 @@ const TheatreList = () => {
       body: JSON.stringify(newTheatre),
       headers: {
         "Content-Type": "application/json",
-        jwttoken: jtwToken
+        jwttoken: jwtToken
       },
     })
       .then((res) => res.json())
@@ -50,7 +54,7 @@ const TheatreList = () => {
   useEffect(() => {
     fetch("http://localhost:5000/api/theater", {
       headers: {
-        jwttoken: jtwToken
+        jwttoken: jwtToken
       },
     })
       .then((res) => res.json())
@@ -58,7 +62,7 @@ const TheatreList = () => {
   }, []);
 
   return (
-    <div className="min-h-screen p-4 bg-gray-100">
+    <div className="min-h-screen p-4 bg-lightgold">
       <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-6">Theatres</h2>
         <div className="mb-4 flex justify-between items-center">
@@ -71,7 +75,7 @@ const TheatreList = () => {
             location.pathname === '/owner/theaters' && (
                 <button
                     onClick={() => setModalIsOpen(true)}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >
                     Add Theatre
                 </button>
@@ -80,23 +84,23 @@ const TheatreList = () => {
         </div>
         <table className="min-w-full bg-white">
           <thead>
-            <tr>
-              <th className="py-2 px-4 border-b border-gray-200">Name</th>
-              <th className="py-2 px-4 border-b border-gray-200">Location</th>
-              <th className="py-2 px-4 border-b border-gray-200">Phone</th>
-              <th className="py-2 px-4 border-b border-gray-200">Email</th>
-              <th className="py-2 px-4 border-b border-gray-200">Shows</th>
-              <th className="py-2 px-4 border-b border-gray-200">Actions</th>
+            <tr className='border-b-2 border-maroon'>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Name</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Location</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Phone</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Email</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Shows</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
             {theaters?.map((theater, index) => (
               <tr key={index}>
-                <td className="py-2 px-4 border-b border-gray-200">{theater.name}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{theater.location}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{theater.phone}</td>
-                <td className="py-2 px-4 border-b border-gray-200">{theater.email}</td>
-                <td className="py-2 px-4 border-b border-gray-200">
+                <td className="py-2 px-4 border-b border-gray-200 text-center">{theater.name}</td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">{theater.location}</td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">{theater.phone}</td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">{theater.email}</td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">
                   <button
                     onClick={() => navigate(`/owner/theaters/${theater._id}/shows`)}
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -104,7 +108,7 @@ const TheatreList = () => {
                     Shows
                   </button>
                 </td>
-                <td className="py-2 px-4 border-b border-gray-200">
+                <td className="py-2 px-4 border-b border-gray-200 text-center">
                   {location.pathname === '/owner/theaters' ? (
                     <>
                       <button
@@ -121,7 +125,7 @@ const TheatreList = () => {
                   ) : (
                     <>
                       <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+                        className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
                       >
                         Approve
                       </button>

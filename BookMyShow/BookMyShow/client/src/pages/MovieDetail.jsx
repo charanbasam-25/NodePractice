@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { jtwToken } from "../constants/authToken";
+
 
 const MovieDetail = () => {
+
+  let jwtToken=""
+  if(localStorage.getItem('jwtToken')){
+     jwtToken= localStorage.getItem('jwtToken');
+  }
   const { movieId } = useParams();
   const [movie, setMovie] = useState({});
 
   useEffect(() => {
     fetch(`http://localhost:5000/api/movie/${movieId}`, {
       headers: {
-        jwttoken: jtwToken,
+        jwttoken: jwtToken,
       },
     })
       .then((res) => res.json())
@@ -21,7 +26,7 @@ const MovieDetail = () => {
   }, []);
 
   return (
-    <div className="min-h-screen p-4 bg-gray-100">
+    <div className="min-h-screen p-4 bg-lightgold">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <div className="flex flex-col md:flex-row">
           <img
@@ -42,7 +47,7 @@ const MovieDetail = () => {
               <strong>Genres:</strong> {movie.genre?.join(", ")}
             </p>
             <Link to={`/movie/${movie._id}/theaters`}>
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              <button className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Book Now
               </button>
             </Link>

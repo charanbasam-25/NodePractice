@@ -53,6 +53,12 @@ export const login = async (req, res) => {
       "password email isadmin"
     );
     console.log(user, userData);
+    if (!user) {
+      return res.status(404).send({
+        status: false,
+        message: "User not found. Please sign up.",
+      });
+    }
     if (user) {
       const isValidPassoword = await bcrypt.compare(
         userData.password,
@@ -70,11 +76,11 @@ export const login = async (req, res) => {
           process.env.jwt_secret_salt,
           { expiresIn: "2d" }
         );
-        console.log(jwtToken,"JwtToken-login------")
         res.setHeader("jwtToken", jwtToken);
         return res.status(200).send({
           status: true,
           Message: "Login sucessfull",
+          jwtToken:jwtToken,
         });
       } else {
         return res.status(401).send({
@@ -108,5 +114,30 @@ export const getUserDetails = async (req, res) => {
     res.send({ jwtToken });
   } catch (e) {
     console.log("Error in getUserDEtials", e);
+  }
+};
+
+
+export const logoutUser = async (req, res) => {
+  try {
+    // Clear the JWT token from the client's cookies
+    res.cookie('jwtToken', '', {  // Set an empty cookie value
+      httpOnly: true, // Same security settings as the original cookie
+      secure: process.env.NODE_ENV === "production",  // Only secure in production
+      sameSite: "Strict", // Prevent CSRF attacks
+      maxAge: 0, // Set the expiration date to the past to delete it
+    });
+
+    // Respond with a success message or redirect to a login page
+    return res.status(200).send({
+      status: true,
+      message: 'Logout successful',
+    });
+  } catch (error) {
+    console.log('Error logging out:', error);
+    return res.status(500).send({
+      status: false,
+      message: 'An error occurred while logging out',
+    });
   }
 };

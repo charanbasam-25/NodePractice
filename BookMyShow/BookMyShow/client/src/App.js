@@ -17,7 +17,7 @@ export const stripePromise = loadStripe("pk_test_51QP2VCG4xcTgD7OB5pK7Baq4zuOVqt
 function App() {
   return (
     <Router>
-      {/* <Navbar /> */}
+      <Navbar />
       <div className="App">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -26,10 +26,8 @@ function App() {
           <Route path="/movie/:movieId" element={<MovieDetail />} />
           <Route path="/movie/:movieId/theaters" element={<Theatres />} />
           <Route path="/movie/:movieId/theaters/:theaterId/shows/:showId" element={<ShowPage />} />
-
           <Route path="/admin/movies" element={<MovieList />} />
           <Route path="/admin/theaters/:theaterId/shows" element={<ShowsList />} />
-
           <Route path="/owner/theaters" element={<TheatreList />} />
           <Route path="/owner/theaters/:theaterId/shows" element={<ShowsList />} /> 
           <Route path="/profile/bookings" element={<Bookings />} />

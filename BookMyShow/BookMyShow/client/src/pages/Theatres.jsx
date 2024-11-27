@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { jtwToken } from '../constants/authToken';
+
 
 
 // 1: {}, 2: {}
@@ -50,11 +50,14 @@ const theatreAndShowsMapper = (data) => {
 const Theatres = () => {
   const [theatres, setTheatres] = useState([]);
   const { movieId } = useParams();
-
+  let jwtToken=""
+  if(localStorage.getItem('jwtToken')){
+     jwtToken= localStorage.getItem('jwtToken');
+  }
   useEffect(() => {
     fetch(`http://localhost:5000/api/show?movie=${movieId}`, {
       headers: {
-        jwttoken: jtwToken
+        jwttoken: jwtToken
       },
     })
       .then((res) => res.json())
@@ -65,7 +68,7 @@ const Theatres = () => {
   }, []);
 console.log(theatres,"theaters----")
   return (
-    <div className="min-h-screen p-4 bg-gray-100">
+    <div className="min-h-screen p-4 bg-lightgold">
       <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-6">Theatres</h2>
         <div className="grid grid-cols-1 gap-6">
@@ -81,7 +84,7 @@ console.log(theatres,"theaters----")
                     <Link to={`/movie/${movieId}/theaters/${theatre._id}/shows/${show._id}`}>
                     <button
                       key={index}
-                      className="h-10 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline align-middle"
+                      className="h-10 bg-lightgold hover:text-white text-maroon font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline align-middle"
                     >
                       {show.time}
                     </button>

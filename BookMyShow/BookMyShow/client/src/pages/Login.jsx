@@ -1,54 +1,68 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-    const [userData, setUserData] = useState({});
-    const navigate = useNavigate();
+  const [userData, setUserData] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
+  const [isSignedUpUser, setSignedUpUser] = useState(true);
 
-    const handleFeildChange = (key) => (e) => {
-      const value = e.target.value;
-      setUserData((prevValues) => ({
-        ...prevValues,
-        [key]: value,
-      }));
-    };
-  
-    const handleLogin = (e) => {
-      e.preventDefault(); 
-    
-      fetch("http://localhost:5000/api/user/login", {
+
+  const handleFeildChange = (key) => (e) => {
+    const value = e.target.value;
+    setUserData((prevValues) => ({
+      ...prevValues,
+      [key]: value,
+    }));
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+
+    try {
+      const response = await fetch("http://localhost:5000/api/user/login", {
         method: "POST",
-        body: JSON.stringify(userData),
+        body: JSON.stringify(userData), // Ensure `userData` contains valid user credentials
         headers: {
           "Content-Type": "application/json",
         },
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error(`HTTP error! Status: ${res.status}`);
-          }
-          return res.json(); 
-        })
-        .then((data) => {
-          console.log(data, "data-----"); 
-          navigate("/"); 
-        })
-        .catch((e) => {
-          console.error("Error during registration:", e); 
-          window.alert(e.message || "An error occurred while registering.");
-        });
-    };
-    
-  
+      });
 
+      if (!response.ok) {
+        if (response.status === 401) {
+          // Handle 401 Unauthorized error specifically
+          setSignedUpUser(false); // Redirect to the signup page
+          return;
+        }
+        if (response.status == 404) {
+          setSignedUpUser(false);
+          return;
+        }
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data, "data-----");
+      if(data?.jwtToken){
+        localStorage.setItem("jwtToken",data.jwtToken);
+      }
+
+      navigate("/"); // Redirect to the homepage after successful login
+    } catch (e) {
+      console.error("Error during login:", e);
+    }
+  };
+
+  const handleSignUp = (e) => {
+    navigate("/signup");
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-lightgold" >
+      <div className="bg-maroon p-8 rounded-lg shadow-lg w-full max-w-md" >
+        <h2 className="text-2xl font-bold mb-6 text-center text-gold">Login</h2>
         <form>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email1">
+            <label className="block text-white text-sm font-bold mb-2" htmlFor="email1">
               Email
             </label>
             <input
@@ -57,11 +71,11 @@ const Login = () => {
               name="email12"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="Email"
-              onChange={handleFeildChange('email')}
+              onChange={handleFeildChange("email")}
             />
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password1">
+            <label className="block text-white text-sm font-bold mb-2" htmlFor="password1">
               Password
             </label>
             <input
@@ -76,16 +90,26 @@ const Login = () => {
           <div className="flex items-center justify-between">
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               onClick={handleLogin}
             >
               Login
             </button>
+            {!isSignedUpUser && (
+              <button
+                type="submit"
+                className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                onClick={handleSignUp}
+              >
+                SignUp
+              </button>
+            )}
           </div>
+          {!isSignedUpUser && <p className="text-gray-200 mt-2">Please signup or use signed up credentials</p>}
         </form>
       </div>
     </div>
   );
-}
+};
 
 export default Login;

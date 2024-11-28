@@ -25,6 +25,12 @@ const Home = () => {
   const jwtToken = Cookies.get('jwtToken');
   console.log(jwtToken,"show----------")
   useEffect(() => {
+    if(localStorage.getItem("jwtToken")==undefined){
+      console.log("inside------ias dmin----")
+      localStorage.setItem('isadmin',false);
+    }
+console.log(localStorage.getItem("isadmin"),"isadmin--------")
+
     fetch("http://localhost:5000/api/movie", {
       headers: {
         jwttoken: jwtToken,

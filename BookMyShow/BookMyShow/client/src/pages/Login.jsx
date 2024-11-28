@@ -45,6 +45,9 @@ const Login = () => {
       if(data?.jwtToken){
         localStorage.setItem("jwtToken",data.jwtToken);
       }
+      if(data?.isAdmin!==undefined){
+        localStorage.setItem('isadmin',data.isAdmin);
+      }
 
       navigate("/"); // Redirect to the homepage after successful login
     } catch (e) {

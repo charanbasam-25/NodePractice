@@ -58,7 +58,8 @@ res.status(200).send(theaterData);
 };
 export const deleteTheater = async (req, res) => {
   try {
-    const theaterData= Theater.findById(req.params.theaterId);
+    const theaterData= await Theater.findByIdAndDelete(req.params.theaterId);
+    console.log(theaterData,"tehaterData----------")
     res.status(200).send({
         success:true,
         Message:"Deleted Successfully",

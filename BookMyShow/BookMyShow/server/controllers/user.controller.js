@@ -81,6 +81,7 @@ export const login = async (req, res) => {
           status: true,
           Message: "Login sucessfull",
           jwtToken:jwtToken,
+          isAdmin:user.isadmin,
         });
       } else {
         return res.status(401).send({

@@ -1,7 +1,7 @@
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-
+import ErrorModal from "./ErrorModalPopUp";
 
 const MovieList = () => {
   const [movies, setMovies] = useState([]);
@@ -15,15 +15,16 @@ const MovieList = () => {
     releaseDate: "",
     duration: "",
   });
-  let jwtToken=""
-  if(localStorage.getItem('jwtToken')){
-     jwtToken= localStorage.getItem('jwtToken');
+  const [errorModalPopUp, setErrorModalPopUp] = useState(false);
+  let jwtToken = "";
+  if (localStorage.getItem("jwtToken")) {
+    jwtToken = localStorage.getItem("jwtToken");
   }
 
   const handleInputChange = (e) => {
     let { name, value } = e.target;
     if (name === "genre" || name === "language") {
-      value = value.split(",").map(item => item.trim());
+      value = value.split(",").map((item) => item.trim());
     }
     setNewMovie({ ...newMovie, [name]: value });
   };
@@ -60,6 +61,15 @@ const MovieList = () => {
       });
   };
 
+  const handlePopup = (e) => {
+    console.log(localStorage.getItem('isadmin'),"isadmin-----")
+    if (JSON.parse(localStorage.getItem("isadmin"))) {
+      setModalIsOpen(true);
+    } else {
+      setErrorModalPopUp(true);
+    }
+  };
+
   useEffect(() => {
     fetch("http://localhost:5000/api/movie", {
       headers: {
@@ -81,7 +91,7 @@ const MovieList = () => {
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline max-w-sm"
           />
           <button
-            onClick={() => setModalIsOpen(true)}
+            onClick={handlePopup}
             className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Add Movie
@@ -89,18 +99,28 @@ const MovieList = () => {
         </div>
         <table className="min-w-full bg-white">
           <thead>
-            <tr  className="border-b-2 border-maroon"> 
-              <th className="py-2 px-4 border-b border-gray-200 text-center">Poster</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">Title</th>
+            <tr className="border-b-2 border-maroon">
+              <th className="py-2 px-4 border-b border-gray-200 text-center">
+                Poster
+              </th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">
+                Title
+              </th>
               <th className="py-2 px-4 border-b border-gray-200 text-center">
                 Description
               </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">Genres</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">Languages</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">
+                Genres
+              </th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">
+                Languages
+              </th>
               <th className="py-2 px-4 border-b border-gray-200 text-center">
                 Release Date
               </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">Duration</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">
+                Duration
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -280,6 +300,11 @@ const MovieList = () => {
           </div>
         </form>
       </Modal>
+      <ErrorModal
+        isOpen={errorModalPopUp}
+        onClose={() => setErrorModalPopUp(false)}
+        content={`You do not have permission to add Movies. Please contact the Admin for assistance. If you are a distributor, request the Admin to add movies on your behalf.`}
+      />
     </div>
   );
 };

@@ -1,48 +1,80 @@
-import React, { useEffect, useState } from 'react';
-import Modal from 'react-modal';
-import { useNavigate, useLocation } from 'react-router-dom';
-
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import Modal from "react-modal";
+import ErrorModal from "./ErrorModalPopUp";
 
 const TheatreList = () => {
   const [theaters, setTheatres] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [contentForModal, setContentForModal] = useState("");
   const [newTheatre, setNewTheatre] = useState({
-    name: '',
-    location: '',
-    phone: '',
-    email: '',
+    name: "",
+    location: "",
+    phone: "",
+    email: "",
+  });
+  const [errorModalPopUp, setErrorModalPopUp] = useState(false);
+  const [formErrors, setFormErrors] = useState({
+    name: "",
+    location: "",
+    phone: "",
+    email: "",
   });
 
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Handle input changes for the fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewTheatre({ ...newTheatre, [name]: value });
+    if (name === "phone") {
+      if (/^\d{0,10}$/.test(value)) {
+        setNewTheatre({ ...newTheatre, [name]: value });
+      }
+    } else {
+      setNewTheatre({ ...newTheatre, [name]: value });
+    }
   };
-  let jwtToken=""
-  if(localStorage.getItem('jwtToken')){
-     jwtToken= localStorage.getItem('jwtToken');
+
+  // Get JWT Token from localStorage
+  let jwtToken = "";
+  if (localStorage.getItem("jwtToken")) {
+    jwtToken = localStorage.getItem("jwtToken");
   }
 
-  const handleAddTheatre = (e) => {
+  // Form validation function
+  const validateForm = () => {
+    const errors = {};
+    if (!newTheatre.name) errors.name = "Please fill in the name.";
+    if (!newTheatre.location) errors.location = "Please fill in the location.";
+    if (!newTheatre.phone) errors.phone = "Please fill in the phone number.";
+    if (!newTheatre.email) errors.email = "Please fill in the email.";
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Handle submit for adding a theatre
+  const handleAddTheatreSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) return; // Prevent API call if validation fails
+
     fetch("http://localhost:5000/api/theater", {
       method: "POST",
       body: JSON.stringify(newTheatre),
       headers: {
         "Content-Type": "application/json",
-        jwttoken: jwtToken
+        jwttoken: jwtToken,
       },
     })
       .then((res) => res.json())
       .then((data) => {
         setTheatres([...theaters, newTheatre]);
         setNewTheatre({
-          name: '',
-          location: '',
-          phone: '',
-          email: '',
+          name: "",
+          location: "",
+          phone: "",
+          email: "",
         });
         setModalIsOpen(false);
       })
@@ -51,15 +83,52 @@ const TheatreList = () => {
       });
   };
 
+  // Fetch theatre data on component mount
   useEffect(() => {
     fetch("http://localhost:5000/api/theater", {
       headers: {
-        jwttoken: jwtToken
+        jwttoken: jwtToken,
       },
     })
       .then((res) => res.json())
       .then((data) => setTheatres(data));
-  }, []);
+  }, [theaters]);
+
+  // Handle 'Add Theatre' button click
+  const handleAddTheater = () => {
+    if (JSON.parse(localStorage.getItem("isadmin"))) {
+      setModalIsOpen(true);
+    } else {
+      setContentForModal(
+        "You do not have permission to add theaters. Please contact the Admin for assistance. If you are a distributor, request the Admin to add theaters on your behalf."
+      );
+      setErrorModalPopUp(true);
+    }
+  };
+
+  // Handle 'Delete Theatre' button click
+  const handleDeleteTheater = (theaterId) => {
+    if (!localStorage.getItem("isadmin")) {
+      setContentForModal(
+        "You do not have permission to delete this theater. Only admins can perform this action. If you encounter any issues, please contact the administrators."
+      );
+      setErrorModalPopUp(true);
+    } else {
+      try {
+        fetch(`http://localhost:5000/api/theater/${theaterId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            jwttoken: jwtToken,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => setTheatres(data.theaterData));
+      } catch (e) {
+        console.log(e, "error in deleting data");
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen p-4 bg-lightgold">
@@ -71,52 +140,71 @@ const TheatreList = () => {
             placeholder="Search by theater"
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline max-w-sm"
           />
-          {
-            location.pathname === '/owner/theaters' && (
-                <button
-                    onClick={() => setModalIsOpen(true)}
-                    className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                    Add Theatre
-                </button>
-            )
-          }
+          {location.pathname === "/owner/theaters" && (
+            <button
+              onClick={handleAddTheater}
+              className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Add Theatre
+            </button>
+          )}
         </div>
         <table className="min-w-full bg-white">
           <thead>
-            <tr className='border-b-2 border-maroon'>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">Name</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">Location</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">Phone</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">Email</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">Shows</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">Actions</th>
+            <tr className="border-b-2 border-maroon">
+              <th className="py-2 px-4 border-b border-gray-200 text-center">
+                Name
+              </th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">
+                Location
+              </th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">
+                Phone
+              </th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">
+                Email
+              </th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">
+                Shows
+              </th>
+              <th className="py-2 px-4 border-b border-gray-200 text-center">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {theaters?.map((theater, index) => (
               <tr key={index}>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">{theater.name}</td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">{theater.location}</td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">{theater.phone}</td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">{theater.email}</td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">
+                  {theater.name}
+                </td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">
+                  {theater.location}
+                </td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">
+                  {theater.phone}
+                </td>
+                <td className="py-2 px-4 border-b border-gray-200 text-center">
+                  {theater.email}
+                </td>
                 <td className="py-2 px-4 border-b border-gray-200 text-center">
                   <button
-                    onClick={() => navigate(`/owner/theaters/${theater._id}/shows`)}
+                    onClick={() =>
+                      navigate(`/owner/theaters/${theater._id}/shows`)
+                    }
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                   >
                     Shows
                   </button>
                 </td>
                 <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {location.pathname === '/owner/theaters' ? (
+                  {location.pathname === "/owner/theaters" ? (
                     <>
-                      <button
-                        className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
-                      >
+                      <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
                         Edit
                       </button>
                       <button
+                        onClick={() => handleDeleteTheater(theater._id)}
                         className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                       >
                         Delete
@@ -124,14 +212,10 @@ const TheatreList = () => {
                     </>
                   ) : (
                     <>
-                      <button
-                        className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
-                      >
+                      <button className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
                         Approve
                       </button>
-                      <button
-                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                      >
+                      <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                         Reject
                       </button>
                     </>
@@ -143,6 +227,7 @@ const TheatreList = () => {
         </table>
       </div>
 
+      {/* Modal for adding theatre */}
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
@@ -151,10 +236,13 @@ const TheatreList = () => {
         overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
       >
         <h2 className="text-2xl font-bold mb-4">Add Theatre</h2>
-        <form onSubmit={handleAddTheatre}>
+        <form onSubmit={handleAddTheatreSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-              Name
+            <label
+              className="block text-sm font-bold text-gray-700 mb-2"
+              htmlFor="name"
+            >
+              Theatre Name
             </label>
             <input
               type="text"
@@ -163,11 +251,16 @@ const TheatreList = () => {
               value={newTheatre.name}
               onChange={handleInputChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="Name"
             />
+            {formErrors.name && (
+              <div className="text-red-500 text-sm">{formErrors.name}</div>
+            )}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="location">
+            <label
+              className="block text-sm font-bold text-gray-700 mb-2"
+              htmlFor="location"
+            >
               Location
             </label>
             <input
@@ -177,25 +270,35 @@ const TheatreList = () => {
               value={newTheatre.location}
               onChange={handleInputChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="Location"
             />
+            {formErrors.location && (
+              <div className="text-red-500 text-sm">{formErrors.location}</div>
+            )}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phone">
-              Phone
+            <label
+              className="block text-sm font-bold text-gray-700 mb-2"
+              htmlFor="phone"
+            >
+              Phone Number
             </label>
             <input
-              type="tel"
+              type="text"
               id="phone"
               name="phone"
               value={newTheatre.phone}
               onChange={handleInputChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="Phone"
             />
+            {formErrors.phone && (
+              <div className="text-red-500 text-sm">{formErrors.phone}</div>
+            )}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+            <label
+              className="block text-sm font-bold text-gray-700 mb-2"
+              htmlFor="email"
+            >
               Email
             </label>
             <input
@@ -205,14 +308,16 @@ const TheatreList = () => {
               value={newTheatre.email}
               onChange={handleInputChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="Email"
             />
+            {formErrors.email && (
+              <div className="text-red-500 text-sm">{formErrors.email}</div>
+            )}
           </div>
+
           <div className="flex items-center justify-between">
             <button
-              type="button"
-              onClick={handleAddTheatre}
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Add Theatre
             </button>
@@ -226,8 +331,15 @@ const TheatreList = () => {
           </div>
         </form>
       </Modal>
+
+      {/* Error Modal */}
+      <ErrorModal
+        isOpen={errorModalPopUp}
+        onClose={() => setErrorModalPopUp(false)}
+        content={contentForModal}
+      />
     </div>
   );
-}
+};
 
 export default TheatreList;

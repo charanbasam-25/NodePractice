@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import SignUp from "../pages/SignUp";
 
 const Navbar = () => {
-  const [isLoggedin, setLoggedIn] = useState();
+  const [isLoggedin, setLoggedIn] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
+    setLoggedIn(false);
     navigate("/signup");
   };
   const isSignUpPage = location.pathname.includes("signup");
   useEffect(()=>{
-    setLoggedIn(localStorage.getItem("jwtToken"));
+    if(localStorage.getItem("jwtToken")){
+      setLoggedIn(true);
+    }
+    
   },[isLoggedin]);
+  console.log(isLoggedin,isSignUpPage,"logined, signuppage------")
   return (
     <nav className="bg-maroon text-white p-4 shadow-lg border-b-2 border-[#f2af08]">
       <div className="max-w-7xl mx-auto flex justify-between items-center">

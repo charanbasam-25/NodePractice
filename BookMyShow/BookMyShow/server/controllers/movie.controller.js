@@ -34,7 +34,7 @@ export const getAllMovie = async (req, res) => {
     if (ownerId) {
       filter.owner = ownerId;
     }
-    console.log(req.cookies,"cookies-----")
+    // console.log(req.cookies,"cookies-----")
         // if owner id is ther we wil get the dtails of owener belopnged movies, else we wil get the all the movies as we are passing {}
     const movieDetails = await Movie.find(filter);
     res.status(200).send(movieDetails);

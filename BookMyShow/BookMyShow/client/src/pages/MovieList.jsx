@@ -15,6 +15,10 @@ const MovieList = () => {
     releaseDate: "",
     duration: "",
   });
+  const [contentForModal, setContentForModal] = useState("");
+  const [isLoggedin, setLoggedIn] = useState(
+    localStorage.getItem("jwtToken") !== null
+  );
   const [errorModalPopUp, setErrorModalPopUp] = useState(false);
   let jwtToken = "";
   if (localStorage.getItem("jwtToken")) {
@@ -31,6 +35,7 @@ const MovieList = () => {
 
   const handleAddMovie = (e) => {
     e.preventDefault();
+
     fetch("http://localhost:5000/api/movie", {
       method: "POST",
       body: JSON.stringify(newMovie),
@@ -61,12 +66,16 @@ const MovieList = () => {
       });
   };
 
-  const handlePopup = (e) => {
-    console.log(localStorage.getItem('isadmin'),"isadmin-----")
-    if (JSON.parse(localStorage.getItem("isadmin"))) {
-      setModalIsOpen(true);
-    } else {
+  const handlePopup = () => {
+    if (!isLoggedin) {
+      setContentForModal("Please login !!!!!");
       setErrorModalPopUp(true);
+    } else {
+      if (JSON.parse(localStorage.getItem("isadmin"))) {
+        setModalIsOpen(true);
+      } else {
+        setErrorModalPopUp(true);
+      }
     }
   };
 
@@ -85,11 +94,6 @@ const MovieList = () => {
       <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-6">Movies</h2>
         <div className="mb-4 flex justify-between items-center">
-          <input
-            type="text"
-            placeholder="Search by movie"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline max-w-sm"
-          />
           <button
             onClick={handlePopup}
             className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -97,64 +101,68 @@ const MovieList = () => {
             Add Movie
           </button>
         </div>
-        <table className="min-w-full bg-white">
-          <thead>
-            <tr className="border-b-2 border-maroon">
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Poster
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Title
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Description
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Genres
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Languages
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Release Date
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Duration
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {movies.map((movie, index) => (
-              <tr key={index}>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  <img
-                    src={movie.poster}
-                    alt={movie.title}
-                    className="w-12 h-12"
-                  />
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {movie.title}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {movie.description}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {movie.genre?.join(", ")}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {movie.language?.join(", ")}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {moment(movie.releaseDate).format("DD-MM-YYYY")}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {movie.duration} min
-                </td>
+
+        {/* Responsive Table with Horizontal Scroll on Small Screens */}
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white">
+            <thead>
+              <tr className="border-b-2 border-maroon">
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Poster
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Title
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Description
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Genres
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Languages
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Release Date
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Duration
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {movies.map((movie, index) => (
+                <tr key={index}>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    <img
+                      src={movie.poster}
+                      alt={movie.title}
+                      className="w-12 h-12"
+                    />
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {movie.title}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {movie.description}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {movie.genre?.join(", ")}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {movie.language?.join(", ")}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {moment(movie.releaseDate).format("DD-MM-YYYY")}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {movie.duration} min
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Modal
@@ -227,10 +235,10 @@ const MovieList = () => {
               type="text"
               id="genre"
               name="genre"
-              value={newMovie.genre}
+              value={newMovie.genre.join(", ")}
               onChange={handleInputChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="Genres"
+              placeholder="Genres (comma separated)"
             />
           </div>
           <div className="mb-4">
@@ -244,10 +252,10 @@ const MovieList = () => {
               type="text"
               id="language"
               name="language"
-              value={newMovie.language}
+              value={newMovie.language.join(", ")}
               onChange={handleInputChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="Languages"
+              placeholder="Languages (comma separated)"
             />
           </div>
           <div className="mb-4">
@@ -271,39 +279,30 @@ const MovieList = () => {
               className="block text-gray-700 text-sm font-bold mb-2"
               htmlFor="duration"
             >
-              Duration
+              Duration (minutes)
             </label>
             <input
-              type="text"
+              type="number"
               id="duration"
               name="duration"
               value={newMovie.duration}
               onChange={handleInputChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="Duration (in minutes)"
             />
           </div>
-          <div className="flex justify-end space-x-4">
-            <button
-              type="button"
-              onClick={() => setModalIsOpen(false)}
-              className="bg-lightgold hover:text-white text-maroon py-2 px-4 rounded"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded"
-            >
-              Add Movie
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Add Movie
+          </button>
         </form>
       </Modal>
+
       <ErrorModal
         isOpen={errorModalPopUp}
-        onClose={() => setErrorModalPopUp(false)}
-        content={`You do not have permission to add Movies. Please contact the Admin for assistance. If you are a distributor, request the Admin to add movies on your behalf.`}
+        setIsOpen={()=>setErrorModalPopUp(false)}
+        content={contentForModal}
       />
     </div>
   );

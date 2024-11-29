@@ -69,7 +69,8 @@ const TheatreList = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setTheatres([...theaters, newTheatre]);
+        console.log(data, "dat---------");
+        setTheatres([...theaters, data]);
         setNewTheatre({
           name: "",
           location: "",
@@ -92,7 +93,7 @@ const TheatreList = () => {
     })
       .then((res) => res.json())
       .then((data) => setTheatres(data));
-  }, [theaters]);
+  }, []);
 
   // Handle 'Add Theatre' button click
   const handleAddTheater = () => {
@@ -108,7 +109,7 @@ const TheatreList = () => {
 
   // Handle 'Delete Theatre' button click
   const handleDeleteTheater = (theaterId) => {
-    if (!localStorage.getItem("isadmin")) {
+    if (!JSON.parse(localStorage.getItem("isadmin"))) {
       setContentForModal(
         "You do not have permission to delete this theater. Only admins can perform this action. If you encounter any issues, please contact the administrators."
       );
@@ -123,7 +124,10 @@ const TheatreList = () => {
           },
         })
           .then((res) => res.json())
-          .then((data) => setTheatres(data.theaterData));
+          .then((data) =>
+            // setTheatres([...theaters, data]));
+            setTheatres(theaters.filter((theater) => theater._id !== theaterId))
+          );
       } catch (e) {
         console.log(e, "error in deleting data");
       }
@@ -135,11 +139,6 @@ const TheatreList = () => {
       <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-6">Theatres</h2>
         <div className="mb-4 flex justify-between items-center">
-          <input
-            type="text"
-            placeholder="Search by theater"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline max-w-sm"
-          />
           {location.pathname === "/owner/theaters" && (
             <button
               onClick={handleAddTheater}
@@ -199,17 +198,12 @@ const TheatreList = () => {
                 </td>
                 <td className="py-2 px-4 border-b border-gray-200 text-center">
                   {location.pathname === "/owner/theaters" ? (
-                    <>
-                      <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteTheater(theater._id)}
-                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                      >
-                        Delete
-                      </button>
-                    </>
+                    <button
+                      onClick={() => handleDeleteTheater(theater._id)}
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                      Delete
+                    </button>
                   ) : (
                     <>
                       <button className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">

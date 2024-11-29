@@ -3,14 +3,19 @@ import Modal from "react-modal";
 import { useLocation, useParams } from "react-router-dom";
 import ErrorModal from "./ErrorModalPopUp"; // Make sure you have this ErrorModal component
 import moment from "moment";
+import LoginError from "./LoginError"
 
 const ShowsList = () => {
   const [shows, setShows] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [isEditClicked, setEditClicked]= useState(false);
+  const [isEditClicked, setEditClicked] = useState(false);
   const { theaterId } = useParams();
   const [movies, setMovies] = useState([]);
   const [contentForModal, setContentForModal] = useState("");
+  const [isLoggedin, setLoggedIn] = useState(
+    localStorage.getItem("jwtToken") !== null
+  );
+  const [isLoginErrorPopUp, setLoginErrorPopUp] = useState(false);
   const [errorModalPopUp, setErrorModalPopUp] = useState(false);
   const [newShow, setNewShow] = useState({
     name: "",
@@ -20,7 +25,7 @@ const ShowsList = () => {
     time: "",
     totalSeats: "",
     ticketPrice: "",
-    id:"",
+    id: "",
   });
 
   let jwtToken = "";
@@ -35,16 +40,29 @@ const ShowsList = () => {
     setNewShow({ ...newShow, [name]: value });
   };
 
-  const handleAddShow = (e) => {
-    e.preventDefault();
-    if (!localStorage.getItem("isadmin")) {
+  const handleMainAddShow = () => {
+
+    if (!JSON.parse(localStorage.getItem("isadmin"))) {
       setContentForModal(
         "You do not have permission to add show. Only admins can perform this action. If you encounter any issues, please contact the administrators."
       );
       setErrorModalPopUp(true);
     } else {
-      console.log("handle--adshow----")
-      fetch("http://localhost:5000/api/show", {
+      setModalIsOpen(true);
+      setEditClicked(true);
+    }
+  };
+
+  const handleAddShow = (e) => {
+    e.preventDefault();
+
+    if (!JSON.parse(localStorage.getItem("isadmin"))) {
+      setContentForModal(
+        "You do not have permission to add show. Only admins can perform this action. If you encounter any issues, please contact the administrators."
+      );
+      setErrorModalPopUp(true);
+    } else {
+      fetch(`http://localhost:5000/api/show?theaterId=${theaterId}`, {
         method: "POST",
         body: JSON.stringify(newShow),
         headers: {
@@ -63,7 +81,7 @@ const ShowsList = () => {
             theater: theaterId,
             totalSeats: "",
             ticketPrice: "",
-            id:""
+            id: "",
           });
           setModalIsOpen(false);
         })
@@ -76,42 +94,45 @@ const ShowsList = () => {
   // Function to handle editing a show
   const handleEdit = (showId) => {
     // Fetch show details by showId
-    console.log(theaterId); 
-    console.log(newShow,"newshow------")
-    setEditClicked(true);
-    fetch(`http://localhost:5000/api/show/${showId}`, {
-      method: "GET",
-      headers: {
-        jwttoken: jwtToken,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        // Populate the form with the existing data for editing
-        console.log(data,"data-----------")
-        setNewShow({
-          name: data.name,
-          movie: data.movie,
-          theater: theaterId,
-          date: data.date,
-          time: data.time,
-          totalSeats: data.totalSeats,
-          ticketPrice: data.ticketPrice,
-          id:data._id
-        });
-        setShows((prevShows) => [...prevShows, data]);
-        setModalIsOpen(true); // Open the modal to edit
+    if (!JSON.parse(localStorage.getItem("isadmin"))) {
+      setContentForModal(
+        "You do not have permission to add show. Only admins can perform this action. If you encounter any issues, please contact the administrators."
+      );
+      setErrorModalPopUp(true);
+    } else {
+      setEditClicked(true);
+      fetch(`http://localhost:5000/api/show/${showId}`, {
+        method: "GET",
+        headers: {
+          jwttoken: jwtToken,
+        },
       })
-      .catch((e) => {
-        console.error(e);
-        setContentForModal("Error fetching show details.");
-        setErrorModalPopUp(true);
-      });
+        .then((res) => res.json())
+        .then((data) => {
+          // Populate the form with the existing data for editing
+          setNewShow({
+            name: data.name,
+            movie: data.movie,
+            theater: theaterId,
+            date: data.date,
+            time: data.time,
+            totalSeats: data.totalSeats,
+            ticketPrice: data.ticketPrice,
+            id: data._id,
+          });
+          // setShows((prevShows) => [...prevShows, data]);
+          setModalIsOpen(true); // Open the modal to edit
+        })
+        .catch((e) => {
+          console.error(e);
+          setContentForModal("Error fetching show details.");
+          setErrorModalPopUp(true);
+        });
+    }
   };
   const updateAddShow = (showId) => {
-    console.log(newShow, "Updating Show Data");
-  
-    fetch(`http://localhost:5000/api/show/${showId}`, {
+    debugger;
+    fetch(`http://localhost:5000/api/show/${showId}?theaterId=${theaterId}`, {
       method: "PUT",
       body: JSON.stringify(newShow),
       headers: {
@@ -127,7 +148,6 @@ const ShowsList = () => {
       })
       .then((data) => {
         if (data) {
-          console.log("Show updated successfully", data);
           setShows((prevShows) =>
             prevShows.map((show) =>
               show._id === data._id ? { ...show, ...data } : show
@@ -139,25 +159,31 @@ const ShowsList = () => {
         console.error("Error updating show:", error);
       });
   };
-  
 
   const handleDelete = (showId) => {
-    if (!window.confirm("Are you sure you want to delete this show?")) return;
-
-    fetch(`http://localhost:5000/api/show/${showId}`, {
-      method: "DELETE",
-      headers: {
-        jwttoken: jwtToken,
-      },
-    })
-      .then(() => {
-        setShows(shows.filter((show) => show._id !== showId));
+    if (!JSON.parse(localStorage.getItem("isadmin"))) {
+      setContentForModal(
+        "You do not have permission to add show. Only admins can perform this action. If you encounter any issues, please contact the administrators."
+      );
+      setErrorModalPopUp(true);
+    } else {
+      fetch(`http://localhost:5000/api/show/${showId}`, {
+        method: "DELETE",
+        body: JSON.stringify({ theaterId: theaterId }),
+        headers: {
+          "Content-Type": "application/json",
+          jwttoken: jwtToken,
+        },
       })
-      .catch((e) => {
-        console.error(e);
-        setContentForModal("Error deleting show.");
-        setErrorModalPopUp(true);
-      });
+        .then((res) => {
+          setShows(shows.filter((show) => show._id !== showId));
+        })
+        .catch((e) => {
+          console.error(e);
+          setContentForModal("Error deleting show.");
+          setErrorModalPopUp(true);
+        });
+    }
   };
 
   useEffect(() => {
@@ -176,21 +202,16 @@ const ShowsList = () => {
     })
       .then((res) => res.json())
       .then((data) => setMovies(data));
-  }, []);
-console.log(shows,"shoiws---------")
+  }, [theaterId]);
+
   return (
     <div className="min-h-screen p-4 bg-lightgold">
       <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-6">Shows</h2>
         <div className="mb-4 flex justify-between items-center">
-          <input
-            type="text"
-            placeholder="Search by show"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline max-w-sm"
-          />
           {location.pathname.startsWith("/owner") && (
             <button
-              onClick={() => setModalIsOpen(true)}
+              onClick={handleMainAddShow}
               className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Add Show
@@ -232,7 +253,7 @@ console.log(shows,"shoiws---------")
                   {show.name}
                 </td>
                 <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {movies.find((movie) => movie._id === show.movie_id)?.title}
+                  {movies.find((movie) => movie._id === show.movie._id)?.title}
                 </td>
                 <td className="py-2 px-4 border-b border-gray-200 text-center">
                   {moment(show.date).format("DD-MM-YYYY")}
@@ -398,7 +419,7 @@ console.log(shows,"shoiws---------")
             </button>
           ) : (
             <button
-              onClick={()=>updateAddShow(newShow.id)}
+              onClick={() => updateAddShow(newShow.id)}
               type="submit"
               className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
@@ -410,9 +431,15 @@ console.log(shows,"shoiws---------")
 
       <ErrorModal
         isOpen={errorModalPopUp}
-        onRequestClose={() => setErrorModalPopUp(false)}
-        message={contentForModal}
+        onClose={() => setErrorModalPopUp(false)}
+        content={contentForModal}
       />
+      {!isLoggedin && (
+        <LoginError
+          message={contentForModal}
+          onClose={() => setLoginErrorPopUp(false)}
+        />
+      )}
     </div>
   );
 };

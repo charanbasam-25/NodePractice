@@ -5,14 +5,18 @@ import { stripePromise } from "../App.js";
 import { Elements } from "@stripe/react-stripe-js";
 
 import CheckoutForm from "./CheckoutForm";
+import LoginError from "./LoginError.jsx"
 
 const ShowPage = () => {
   const { showId } = useParams();
   const [show, setShow] = useState({});
   const [selectedSeats, setSelectedSeats] = useState(1);
   const [clientSecret, setClientSecret] = useState("");
+  const [isLoggedin, setLoggedIn] = useState(localStorage.getItem("jwtToken") !== null);
   let [searchParams] = useSearchParams();
   const navigate = useNavigate();
+const [contentForModal, setContentForModal]= useState("");
+const [loginErrorPopUp, setLoginErrorPopUp]= useState("");
 
   const appearance = {
     theme: "stripe",
@@ -29,17 +33,28 @@ const ShowPage = () => {
   const handleBookSeats = () => {
     // Implement booking logic here
     // Create PaymentIntent as soon as the page loads
-    fetch("http://localhost:5000/api/booking/create-checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", jwttoken: jwtToken },
-      body: JSON.stringify({
-        seats: selectedSeats,
-        price: show.ticketPrice,
-        showId,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => setClientSecret(data.clientSecret));
+  
+      if (localStorage.getItem("jwtToken")) {
+        setLoggedIn(true);
+        fetch("http://localhost:5000/api/booking/create-checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", jwttoken: jwtToken },
+          body: JSON.stringify({
+            seats: selectedSeats,
+            price: show.ticketPrice,
+            showId,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => setClientSecret(data.clientSecret));
+      }else{
+        setLoggedIn(false)
+        setContentForModal("Please login !!!!!")
+        
+        setLoginErrorPopUp(true);
+      }
+    
+   
   };
 
 
@@ -140,10 +155,15 @@ const ShowPage = () => {
             }}
             stripe={stripePromise}
           >
+            <div class="border-2 border-lightgold p-4 rounded-lg">
             <CheckoutForm successUrl={window.location.href}  clientSecret={clientSecret} />
+            </div>
           </Elements>
         )}
       </div>
+      {!isLoggedin && (
+        <LoginError message={contentForModal} onClose={() => setLoginErrorPopUp(false)} />
+      )}
     </div>
   );
 };

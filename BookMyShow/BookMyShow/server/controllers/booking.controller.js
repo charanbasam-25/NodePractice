@@ -104,8 +104,16 @@ export const createBooking = async (req, res) => {
 };
 
 export const getBookingDetail = async (req, res) => {
+  
   try {
-    const bookingDetail = await Booking.find()
+     let userObject={}
+    if(req.query.forUser){
+      userObject={
+        user:req.user.id,
+      }
+    }
+    console.log(userObject)
+    const bookingDetail = await Booking.find(userObject)
       .populate("user")
       .populate({
         path: "show",
@@ -123,7 +131,7 @@ export const getBookingDetail = async (req, res) => {
           model: "theaters",
         },
       });
-      // console.log(bookingDetail,"bookingdetials-----")
+      console.log(bookingDetail,"bookingdetials-----")
     res.send(bookingDetail);
   } catch (e) {
     res.status(500).send({

@@ -32,13 +32,13 @@ const theatreData = [
 
 const theatreAndShowsMapper = (data) => {
   const obj = data.reduce((acc, show) => {
-    if (!acc[show.theater._id]) {
-      acc[show.theater._id] = { ...show.theater, shows: [] };
+    if (!acc[show?.theater?._id]) {
+      acc[show?.theater?._id] = { ...show.theater, shows: [] };
     }
-    acc[show.theater._id].shows.push({
-      _id: show._id,
-      name: show.name,
-      time: show.time,
+    acc[show?.theater?._id].shows.push({
+      _id: show?._id,
+      name: show?.name,
+      time: show?.time,
     });
 
     return acc;

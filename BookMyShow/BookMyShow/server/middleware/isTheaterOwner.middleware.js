@@ -2,10 +2,10 @@ import Theater from "../Modal/theater.modal.js";
 
 const isTheaterOwner = async (req, res, next) => {
   console.log("Checking if user is the theater owner...");
-  console.log(req.body,"theaterbodyyyy")
+  console.log(req.body ,req.params,"theaterbodyyyy")
   try {
     // Assuming the theater ID is passed in req.body, but you could also use req.params or req.query
-    const theaterId = req.body.theater || req.params.theaterId;
+    const theaterId = req.body.theaterId || req.params.theaterId|| req.query.theaterId
     
     // If the theater ID isn't provided in either body or params, return an error
     if (!theaterId) {

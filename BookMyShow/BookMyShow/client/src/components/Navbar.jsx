@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import SignUp from "../pages/SignUp";
 
 const Navbar = () => {
   const [isLoggedin, setLoggedIn] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Logout handler
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
     setLoggedIn(false);
-    navigate("/signup");
+    navigate("/login"); // Redirect to login page after logout
   };
+
+  // Check if on the sign-up or login page
   const isSignUpPage = location.pathname.includes("signup");
-  useEffect(()=>{
-    if(localStorage.getItem("jwtToken")){
+  const isLoginPage = location.pathname.includes("login");
+
+  useEffect(() => {
+    if (localStorage.getItem("jwtToken")) {
       setLoggedIn(true);
     }
-    
-  },[isLoggedin]);
-  console.log(isLoggedin,isSignUpPage,"logined, signuppage------")
+  }, [isLoggedin]);
+
   return (
     <nav className="bg-maroon text-white p-4 shadow-lg border-b-2 border-[#f2af08]">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -29,8 +32,8 @@ const Navbar = () => {
             to="/"
             className="text-4xl font-serif font-bold text-gold hover:text-yellow-300 transition-all duration-300"
           >
-           OG Movies
-           <p className="text-xs">Old Glod</p>
+            OG Movies
+            <p className="text-xs">Old Gold</p>
           </Link>
         </div>
 
@@ -42,7 +45,9 @@ const Navbar = () => {
           >
             Home
           </Link>
-          {!isLoggedin && (
+
+          {/* Show Login link if not logged in, and on the Sign Up page */}
+          {!isLoggedin && (isSignUpPage || !isLoginPage) && (
             <Link
               to="/login"
               className="text-white hover:text-gold transition-all duration-300 text-lg"
@@ -50,7 +55,9 @@ const Navbar = () => {
               Login
             </Link>
           )}
-          {(isLoggedin && !isSignUpPage) && (
+
+          {/* Show Logout link if logged in */}
+          {isLoggedin && (
             <div
               onClick={handleLogout}
               className="text-white hover:text-gold transition-all duration-300 text-lg"
@@ -58,7 +65,9 @@ const Navbar = () => {
               Logout
             </div>
           )}
-          {!isSignUpPage && (
+
+          {/* Show Sign Up link only if on the Login page and not logged in */}
+          {!isLoggedin && isLoginPage && (
             <Link
               to="/signup"
               className="text-white hover:text-gold transition-all duration-300 text-lg"
@@ -66,6 +75,7 @@ const Navbar = () => {
               Sign Up
             </Link>
           )}
+
           <Link
             to="/profile/bookings"
             className="text-white hover:text-gold transition-all duration-300 text-lg"
@@ -76,13 +86,13 @@ const Navbar = () => {
             to="/admin/movies"
             className="text-white hover:text-gold transition-all duration-300 text-lg"
           >
-            Admin Movies
+            Movies
           </Link>
           <Link
             to="/owner/theaters"
             className="text-white hover:text-gold transition-all duration-300 text-lg"
           >
-            Owner Theaters
+            Theaters
           </Link>
         </div>
 

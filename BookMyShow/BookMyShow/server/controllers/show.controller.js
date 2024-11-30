@@ -3,14 +3,6 @@ import Theater from "../Modal/theater.modal.js";
 
 export const addShow = async (req, res) => {
   try {
-    // const theaterDetials = await Theater.findById(req.body.theater);
-    // console.log(theaterDetials, "theatr details-=---");
-    // // if(theaterDetials.owner != req.user.id){
-    // //     return res.status(403).send({
-    // //         success:false,
-    // //         Messagge:`You are the owner of ${theaterDetials.name}`
-    // //     })
-    // // }
     const showDetials = new Show(req.body);
     await showDetials.save();
     res.status(200).send({ sucess: true, ...showDetials });
@@ -30,7 +22,7 @@ export const updateShow = async (req, res) => {
       { $set: req.body },
       { new: true }
     )
-      .populate("movie", "name") // Populate specific fields for testing
+      .populate("movie", "name") 
       .populate("theater", "name");
 
     if (!updatedDetails) {
@@ -39,7 +31,7 @@ export const updateShow = async (req, res) => {
 
     console.log(updatedDetails, "Updated Details");
 
-    res.status(200).send(updatedDetails); // Send the updated details
+    res.status(200).send(updatedDetails);
   } catch (error) {
     res.status(500).send({ success: false, message: error.message });
   }
@@ -67,7 +59,6 @@ export const getShowById = async (req, res) => {
       "theater",
       "movie",
     ]);
-    console.log(showDetail, "showDetial--------");
     res.send(showDetail);
   } catch (e) {
     res.status(500).send({
@@ -93,7 +84,6 @@ export const getShowByFilter = async (req, res) => {
       .populate("theater")
       .populate("movie");
     res.status(200).send(showDetails);
-    console.log(showDetails,"showdeatils-------")
   } catch (e) {
     res.status(500).send({
       success: false,

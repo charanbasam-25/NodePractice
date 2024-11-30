@@ -38,12 +38,6 @@ userScehma.pre("save", async function (next) {
   this.password = hashedPassword;
   next();
 });
-// userScehma.post('save', function(doc){
-//     console.log(this,"thisss");
-//     this.password= this.password+"--encrypted";
-//     console.log(doc,"thisis doc-------")
-
-// })
 const User = model("users", userScehma);
 
 export default User;

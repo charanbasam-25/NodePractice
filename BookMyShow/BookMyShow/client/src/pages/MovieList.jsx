@@ -74,6 +74,9 @@ const MovieList = () => {
       if (JSON.parse(localStorage.getItem("isadmin"))) {
         setModalIsOpen(true);
       } else {
+        setContentForModal(
+          "You do not have permission to add theaters. Please contact the Admin for assistance. If you are a distributor, request the Admin to add theaters on your behalf."
+        );
         setErrorModalPopUp(true);
       }
     }
@@ -301,7 +304,7 @@ const MovieList = () => {
 
       <ErrorModal
         isOpen={errorModalPopUp}
-        setIsOpen={()=>setErrorModalPopUp(false)}
+        onClose={() => setErrorModalPopUp(false)}
         content={contentForModal}
       />
     </div>

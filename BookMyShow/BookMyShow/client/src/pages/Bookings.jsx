@@ -29,9 +29,8 @@ const Bookings = () => {
     }
   }, []);
 
-  console.log(bookings, "bookings------------");
   const handleAllBookings = () => {
-    if (!localStorage.getItem("isadmin")) {
+    if (JSON.parse(localStorage.getItem("isadmin"))) {
       setForUser(false);
       fetch(`http://localhost:5000/api/booking`, {
         headers: {

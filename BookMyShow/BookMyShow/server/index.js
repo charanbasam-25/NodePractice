@@ -33,8 +33,6 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(cookieParser());
 
-// CORS configuration (Allow requests only from React frontend)
-const allowedOrigins = ['http://localhost:3000', 'https://checkout.stripe.com'];
 
 app.use(cors());
 // Routes
@@ -50,7 +48,8 @@ app.all('*', (req, res) => {
 });
 export const stripe = new Stripe(process.env.stripe_secret_key)
 // Start server
-app.listen(5000, () => {
+const portNumber= process.env.PORT|| 5000
+app.listen(portNumber, () => {
     console.log(process.env.stripe_secret_key,"secret key-222---")
     console.log("Server is running at http://localhost:5000");
     connectToDB();

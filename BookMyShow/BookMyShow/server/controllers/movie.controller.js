@@ -2,11 +2,9 @@ import Movie from "../Modal/movie.modal.js";
 
 export const addMovie = async (req, res) => {
   try {
-    console.log(req.body,"body-0-------")
     const newMovie = new Movie(req.body);
     newMovie.owner = req.user.id;
     const movieDetails = await newMovie.save();
-    console.log(movieDetails,"moviedetails-----")
     return res.status(200).send(movieDetails);
   } catch (e) {
     console.error("Error in addMovie:", e);
@@ -24,7 +22,6 @@ export const getMovieById = async (req, res) => {
       success: false,
       Message: e.message,
     });
-    console.log(e, "---Error");
   }
 };
 export const getAllMovie = async (req, res) => {
@@ -34,8 +31,7 @@ export const getAllMovie = async (req, res) => {
     if (ownerId) {
       filter.owner = ownerId;
     }
-    // console.log(req.cookies,"cookies-----")
-        // if owner id is ther we wil get the dtails of owener belopnged movies, else we wil get the all the movies as we are passing {}
+
     const movieDetails = await Movie.find(filter);
     res.status(200).send(movieDetails);
   } catch (e) {
@@ -43,7 +39,6 @@ export const getAllMovie = async (req, res) => {
       success: false,
       Message: e.message,
     });
-    console.log(e, "---Error");
   }
 };
 
@@ -56,7 +51,6 @@ res.status(200).send(movieData);
       success: false,
       Message: e.message,
     });
-    console.log(e, "---Error");
   }
 };
 export const deleteMovie = async (req, res) => {
@@ -71,6 +65,5 @@ export const deleteMovie = async (req, res) => {
       success: false,
       Message: e.message,
     });
-    console.log(e, "---Error");
   }
 };

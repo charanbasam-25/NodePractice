@@ -36,7 +36,7 @@ const MovieList = () => {
   const handleAddMovie = (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:5000/api/movie", {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/movie`, {
       method: "POST",
       body: JSON.stringify(newMovie),
       headers: {
@@ -83,7 +83,7 @@ const MovieList = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/movie", {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/movie` ,{
       headers: {
         jwttoken: jwtToken,
       },
@@ -104,8 +104,6 @@ const MovieList = () => {
             Add Movie
           </button>
         </div>
-
-        {/* Responsive Table with Horizontal Scroll on Small Screens */}
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
             <thead>

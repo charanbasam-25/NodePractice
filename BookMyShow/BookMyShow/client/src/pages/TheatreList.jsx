@@ -23,8 +23,6 @@ const TheatreList = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Handle input changes for the fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "phone") {
@@ -36,13 +34,11 @@ const TheatreList = () => {
     }
   };
 
-  // Get JWT Token from localStorage
   let jwtToken = "";
   if (localStorage.getItem("jwtToken")) {
     jwtToken = localStorage.getItem("jwtToken");
   }
 
-  // Form validation function
   const validateForm = () => {
     const errors = {};
     if (!newTheatre.name) errors.name = "Please fill in the name.";
@@ -54,12 +50,11 @@ const TheatreList = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // Handle submit for adding a theatre
   const handleAddTheatreSubmit = (e) => {
     e.preventDefault();
-    if (!validateForm()) return; // Prevent API call if validation fails
+    if (!validateForm()) return; 
 
-    fetch("http://localhost:5000/api/theater", {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/theater`, {
       method: "POST",
       body: JSON.stringify(newTheatre),
       headers: {
@@ -69,7 +64,6 @@ const TheatreList = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data, "dat---------");
         setTheatres([...theaters, data]);
         setNewTheatre({
           name: "",
@@ -84,9 +78,8 @@ const TheatreList = () => {
       });
   };
 
-  // Fetch theatre data on component mount
   useEffect(() => {
-    fetch("http://localhost:5000/api/theater", {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/theater`, {
       headers: {
         jwttoken: jwtToken,
       },
@@ -94,8 +87,6 @@ const TheatreList = () => {
       .then((res) => res.json())
       .then((data) => setTheatres(data));
   }, []);
-
-  // Handle 'Add Theatre' button click
   const handleAddTheater = () => {
     if (JSON.parse(localStorage.getItem("isadmin"))) {
       setModalIsOpen(true);
@@ -106,8 +97,6 @@ const TheatreList = () => {
       setErrorModalPopUp(true);
     }
   };
-
-  // Handle 'Delete Theatre' button click
   const handleDeleteTheater = (theaterId) => {
     if (!JSON.parse(localStorage.getItem("isadmin"))) {
       setContentForModal(
@@ -116,7 +105,8 @@ const TheatreList = () => {
       setErrorModalPopUp(true);
     } else {
       try {
-        fetch(`http://localhost:5000/api/theater/${theaterId}`, {
+       
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/theater/${theaterId}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -125,7 +115,6 @@ const TheatreList = () => {
         })
           .then((res) => res.json())
           .then((data) =>
-            // setTheatres([...theaters, data]));
             setTheatres(theaters.filter((theater) => theater._id !== theaterId))
           );
       } catch (e) {
@@ -221,7 +210,6 @@ const TheatreList = () => {
         </table>
       </div>
 
-      {/* Modal for adding theatre */}
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
@@ -326,7 +314,6 @@ const TheatreList = () => {
         </form>
       </Modal>
 
-      {/* Error Modal */}
       <ErrorModal
         isOpen={errorModalPopUp}
         onClose={() => setErrorModalPopUp(false)}

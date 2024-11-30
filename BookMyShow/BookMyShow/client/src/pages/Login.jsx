@@ -16,12 +16,11 @@ const Login = () => {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
-
+    e.preventDefault(); 
     try {
-      const response = await fetch("http://localhost:5000/api/user/login", {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/login`, {
         method: "POST",
-        body: JSON.stringify(userData), // Ensure `userData` contains valid user credentials
+        body: JSON.stringify(userData), 
         headers: {
           "Content-Type": "application/json",
         },
@@ -29,8 +28,7 @@ const Login = () => {
 
       if (!response.ok) {
         if (response.status === 401) {
-          // Handle 401 Unauthorized error specifically
-          setSignedUpUser(false); // Redirect to the signup page
+          setSignedUpUser(false); 
           return;
         }
         if (response.status == 404) {
@@ -41,15 +39,13 @@ const Login = () => {
       }
 
       const data = await response.json();
-      console.log(data, "data-----");
       if(data?.jwtToken){
         localStorage.setItem("jwtToken",data.jwtToken);
       }
       if(data?.isAdmin!==undefined){
         localStorage.setItem('isadmin',data.isAdmin);
       }
-
-      navigate("/"); // Redirect to the homepage after successful login
+      navigate("/");
     } catch (e) {
       console.error("Error during login:", e);
     }

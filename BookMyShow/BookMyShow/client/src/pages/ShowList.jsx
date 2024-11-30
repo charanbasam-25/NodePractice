@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useLocation, useParams } from "react-router-dom";
-import ErrorModal from "./ErrorModalPopUp"; // Make sure you have this ErrorModal component
+import ErrorModal from "./ErrorModalPopUp"; 
 import moment from "moment";
 import LoginError from "./LoginError"
 
@@ -62,7 +62,7 @@ const ShowsList = () => {
       );
       setErrorModalPopUp(true);
     } else {
-      fetch(`http://localhost:5000/api/show?theaterId=${theaterId}`, {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/api/show?theaterId=${theaterId}`, {
         method: "POST",
         body: JSON.stringify(newShow),
         headers: {
@@ -101,7 +101,7 @@ const ShowsList = () => {
       setErrorModalPopUp(true);
     } else {
       setEditClicked(true);
-      fetch(`http://localhost:5000/api/show/${showId}`, {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/api/show/${showId}`, {
         method: "GET",
         headers: {
           jwttoken: jwtToken,
@@ -131,8 +131,7 @@ const ShowsList = () => {
     }
   };
   const updateAddShow = (showId) => {
-    debugger;
-    fetch(`http://localhost:5000/api/show/${showId}?theaterId=${theaterId}`, {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/show/${showId}?theaterId=${theaterId}`, {
       method: "PUT",
       body: JSON.stringify(newShow),
       headers: {
@@ -167,7 +166,7 @@ const ShowsList = () => {
       );
       setErrorModalPopUp(true);
     } else {
-      fetch(`http://localhost:5000/api/show/${showId}`, {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/api/show/${showId}`, {
         method: "DELETE",
         body: JSON.stringify({ theaterId: theaterId }),
         headers: {
@@ -187,7 +186,7 @@ const ShowsList = () => {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/show?theater=${theaterId}`, {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/show?theater=${theaterId}`,  {
       headers: {
         jwttoken: jwtToken,
       },
@@ -195,7 +194,7 @@ const ShowsList = () => {
       .then((res) => res.json())
       .then((data) => setShows(data));
 
-    fetch("http://localhost:5000/api/movie", {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/api/movie`, {
       headers: {
         jwttoken: jwtToken,
       },

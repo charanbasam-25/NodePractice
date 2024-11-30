@@ -15,8 +15,7 @@ const SignUp = () => {
 
   const handleRegister = (e) => {
     e.preventDefault(); 
-  
-    fetch("http://localhost:5000/api/user", {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user`, {
       method: "POST",
       body: JSON.stringify(userData),
       headers: {
@@ -30,7 +29,6 @@ const SignUp = () => {
         return res.json(); 
       })
       .then((data) => {
-        console.log(data, "data-----"); 
         navigate("/login"); 
       })
       .catch((e) => {

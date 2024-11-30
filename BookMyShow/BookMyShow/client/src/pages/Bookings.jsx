@@ -17,7 +17,7 @@ const Bookings = () => {
 
   useEffect(() => {
     if (localStorage.getItem("jwtToken")) {
-      fetch(`http://localhost:5000/api/booking?forUser=${forUser}`, {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/api/booking?forUser=${forUser}`, {
         headers: {
           jwttoken: jwtToken,
         },
@@ -32,7 +32,7 @@ const Bookings = () => {
   const handleAllBookings = () => {
     if (JSON.parse(localStorage.getItem("isadmin"))) {
       setForUser(false);
-      fetch(`http://localhost:5000/api/booking`, {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/api/booking`, {
         headers: {
           jwttoken: jwtToken,
         },

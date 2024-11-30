@@ -23,15 +23,12 @@ const Home = () => {
     (currentPage + 1) * itemsPerPage
   );
   const jwtToken = Cookies.get("jwtToken");
-  console.log(jwtToken, "show----------");
   useEffect(() => {
     if (localStorage.getItem("jwtToken") == undefined) {
-      console.log("inside------ias dmin----");
       localStorage.setItem("isadmin", false);
     }
-    console.log(localStorage.getItem("isadmin"), "isadmin--------");
 
-    fetch("http://localhost:5000/api/movie", {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/movie`,{
       headers: {
         jwttoken: jwtToken,
       },

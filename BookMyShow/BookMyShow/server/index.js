@@ -51,6 +51,6 @@ export const stripe = new Stripe(process.env.stripe_secret_key)
 const portNumber= process.env.PORT|| 5000
 app.listen(portNumber, () => {
     console.log(process.env.stripe_secret_key,"secret key-222---")
-    console.log("Server is running at http://localhost:5000");
+    console.log(`Server is running at ${process.env.stripe_secret_key}`);
     connectToDB();
 });

@@ -55,7 +55,7 @@ const Theatres = () => {
      jwtToken= localStorage.getItem('jwtToken');
   }
   useEffect(() => {
-    fetch(`http://localhost:5000/api/show?movie=${movieId}`, {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/show?movie=${movieId}`,{
       headers: {
         jwttoken: jwtToken
       },

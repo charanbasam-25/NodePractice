@@ -31,12 +31,9 @@ const [loginErrorPopUp, setLoginErrorPopUp]= useState("");
   }
 
   const handleBookSeats = () => {
-    // Implement booking logic here
-    // Create PaymentIntent as soon as the page loads
-  
       if (localStorage.getItem("jwtToken")) {
         setLoggedIn(true);
-        fetch("http://localhost:5000/api/booking/create-checkout", {
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/api/booking/create-checkout`,  {
           method: "POST",
           headers: { "Content-Type": "application/json", jwttoken: jwtToken },
           body: JSON.stringify({
@@ -59,7 +56,7 @@ const [loginErrorPopUp, setLoginErrorPopUp]= useState("");
 
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/show/${showId}`, {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/show/${showId}`, {
       headers: {
         jwttoken: jwtToken,
       },
@@ -74,12 +71,10 @@ const [loginErrorPopUp, setLoginErrorPopUp]= useState("");
   }, []);
 
   useEffect(() => {
-    // Call confirm booking API
 
     const transactionId = searchParams.get("payment_intent");
     if (transactionId) {
-      console.log("Inside transactionId---------")
-      fetch("http://localhost:5000/api/booking/confirm", {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/api/booking/confirm`,  {
         method: "POST",
         headers: { "Content-Type": "application/json", jwttoken: jwtToken },
         body: JSON.stringify({

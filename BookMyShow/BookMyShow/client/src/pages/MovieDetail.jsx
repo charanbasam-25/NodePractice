@@ -12,15 +12,13 @@ const MovieDetail = () => {
   const [movie, setMovie] = useState({});
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/movie/${movieId}`, {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/movie/${movieId}`, {
       headers: {
         jwttoken: jwtToken,
       },
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data, "movieDetialData------");
-
         setMovie(data);
       });
   }, []);

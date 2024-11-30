@@ -5,9 +5,7 @@ const ErrorModal = ({ message, onClose }) => {
   const navigate = useNavigate();
 
   const handleModalClick = () => {
-    // Close the modal (could also navigate directly from here)
     onClose();
-    // Navigate to the login page
     navigate('/login');
   };
 

@@ -5,15 +5,12 @@ const Navbar = () => {
   const [isLoggedin, setLoggedIn] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Logout handler
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
     setLoggedIn(false);
-    navigate("/login"); // Redirect to login page after logout
+    navigate("/login"); 
   };
 
-  // Check if on the sign-up or login page
   const isSignUpPage = location.pathname.includes("signup");
   const isLoginPage = location.pathname.includes("login");
 
@@ -26,7 +23,6 @@ const Navbar = () => {
   return (
     <nav className="bg-maroon text-white p-4 shadow-lg border-b-2 border-[#f2af08]">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* Text-based Logo */}
         <div className="flex items-center">
           <Link
             to="/"
@@ -36,8 +32,6 @@ const Navbar = () => {
             <p className="text-xs">Old Gold</p>
           </Link>
         </div>
-
-        {/* Nav Links */}
         <div className="hidden md:flex space-x-8">
           <Link
             to="/"
@@ -45,8 +39,6 @@ const Navbar = () => {
           >
             Home
           </Link>
-
-          {/* Show Login link if not logged in, and on the Sign Up page */}
           {!isLoggedin && (isSignUpPage || !isLoginPage) && (
             <Link
               to="/login"
@@ -55,8 +47,6 @@ const Navbar = () => {
               Login
             </Link>
           )}
-
-          {/* Show Logout link if logged in */}
           {isLoggedin && (
             <div
               onClick={handleLogout}
@@ -65,8 +55,6 @@ const Navbar = () => {
               Logout
             </div>
           )}
-
-          {/* Show Sign Up link only if on the Login page and not logged in */}
           {!isLoggedin && isLoginPage && (
             <Link
               to="/signup"
@@ -96,7 +84,6 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center">
           <button className="text-white hover:text-gold focus:outline-none">
             <svg

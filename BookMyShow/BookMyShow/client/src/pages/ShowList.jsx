@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useLocation, useParams } from "react-router-dom";
-import ErrorModal from "./ErrorModalPopUp"; 
+import ErrorModal from "./ErrorModalPopUp";
 import moment from "moment";
-import LoginError from "./LoginError"
+import LoginError from "./LoginError";
 
 const ShowsList = () => {
   const [shows, setShows] = useState([]);
@@ -41,7 +41,6 @@ const ShowsList = () => {
   };
 
   const handleMainAddShow = () => {
-
     if (!JSON.parse(localStorage.getItem("isadmin"))) {
       setContentForModal(
         "You do not have permission to add show. Only admins can perform this action. If you encounter any issues, please contact the administrators."
@@ -62,14 +61,17 @@ const ShowsList = () => {
       );
       setErrorModalPopUp(true);
     } else {
-      fetch(`${process.env.REACT_APP_API_BASE_URL}/api/show?theaterId=${theaterId}`, {
-        method: "POST",
-        body: JSON.stringify(newShow),
-        headers: {
-          "Content-Type": "application/json",
-          jwttoken: jwtToken,
-        },
-      })
+      fetch(
+        `${process.env.REACT_APP_API_BASE_URL}/api/show?theaterId=${theaterId}`,
+        {
+          method: "POST",
+          body: JSON.stringify(newShow),
+          headers: {
+            "Content-Type": "application/json",
+            jwttoken: jwtToken,
+          },
+        }
+      )
         .then((res) => res.json())
         .then((data) => {
           setShows([...shows, newShow]);
@@ -131,14 +133,17 @@ const ShowsList = () => {
     }
   };
   const updateAddShow = (showId) => {
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/show/${showId}?theaterId=${theaterId}`, {
-      method: "PUT",
-      body: JSON.stringify(newShow),
-      headers: {
-        "Content-Type": "application/json",
-        jwttoken: jwtToken,
-      },
-    })
+    fetch(
+      `${process.env.REACT_APP_API_BASE_URL}/api/show/${showId}?theaterId=${theaterId}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(newShow),
+        headers: {
+          "Content-Type": "application/json",
+          jwttoken: jwtToken,
+        },
+      }
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -186,15 +191,18 @@ const ShowsList = () => {
   };
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/show?theater=${theaterId}`,  {
-      headers: {
-        jwttoken: jwtToken,
-      },
-    })
+    fetch(
+      `${process.env.REACT_APP_API_BASE_URL}/api/show?theater=${theaterId}`,
+      {
+        headers: {
+          jwttoken: jwtToken,
+        },
+      }
+    )
       .then((res) => res.json())
       .then((data) => setShows(data));
 
-      fetch(`${process.env.REACT_APP_API_BASE_URL}/api/movie`, {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/movie`, {
       headers: {
         jwttoken: jwtToken,
       },
@@ -217,76 +225,81 @@ const ShowsList = () => {
             </button>
           )}
         </div>
-        <table className="min-w-full bg-white">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Name
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Movie
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Date
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Time
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Total Seats
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Price
-              </th>
-              {location.pathname.startsWith("/owner") && (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white">
+            <thead>
+              <tr>
                 <th className="py-2 px-4 border-b border-gray-200 text-center">
-                  Actions
+                  Name
                 </th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {shows.map((show, index) => (
-              <tr key={index}>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {show.name}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {movies.find((movie) => movie._id === show.movie._id)?.title}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {moment(show.date).format("DD-MM-YYYY")}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {show.time}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {show.totalSeats}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {show.ticketPrice}
-                </td>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Movie
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Date
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Time
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Total Seats
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Price
+                </th>
                 {location.pathname.startsWith("/owner") && (
-                  <td className="py-2 px-4 border-b border-gray-200 text-center flex space-x-2">
-                    <button
-                      onClick={() => handleEdit(show._id)}
-                      data-attribute={show._id}
-                      className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(show._id)}
-                      className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    >
-                      Delete
-                    </button>
-                  </td>
+                  <th className="py-2 px-4 border-b border-gray-200 text-center">
+                    Actions
+                  </th>
                 )}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {shows.map((show, index) => (
+                <tr key={index}>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {show.name}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {
+                      movies.find((movie) => movie._id === show.movie._id)
+                        ?.title
+                    }
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {moment(show.date).format("DD-MM-YYYY")}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {show.time}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {show.totalSeats}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {show.ticketPrice}
+                  </td>
+                  {location.pathname.startsWith("/owner") && (
+                    <td className="py-2 px-4 border-b border-gray-200 text-center flex space-x-2">
+                      <button
+                        onClick={() => handleEdit(show._id)}
+                        data-attribute={show._id}
+                        className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(show._id)}
+                        className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Modal

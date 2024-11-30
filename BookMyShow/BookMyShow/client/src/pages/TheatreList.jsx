@@ -52,7 +52,7 @@ const TheatreList = () => {
 
   const handleAddTheatreSubmit = (e) => {
     e.preventDefault();
-    if (!validateForm()) return; 
+    if (!validateForm()) return;
 
     fetch(`${process.env.REACT_APP_API_BASE_URL}/api/theater`, {
       method: "POST",
@@ -105,14 +105,16 @@ const TheatreList = () => {
       setErrorModalPopUp(true);
     } else {
       try {
-       
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/theater/${theaterId}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            jwttoken: jwtToken,
-          },
-        })
+        fetch(
+          `${process.env.REACT_APP_API_BASE_URL}/api/theater/${theaterId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              jwttoken: jwtToken,
+            },
+          }
+        )
           .then((res) => res.json())
           .then((data) =>
             setTheatres(theaters.filter((theater) => theater._id !== theaterId))
@@ -137,77 +139,79 @@ const TheatreList = () => {
             </button>
           )}
         </div>
-        <table className="min-w-full bg-white">
-          <thead>
-            <tr className="border-b-2 border-maroon">
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Name
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Location
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Phone
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Email
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Shows
-              </th>
-              <th className="py-2 px-4 border-b border-gray-200 text-center">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {theaters?.map((theater, index) => (
-              <tr key={index}>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {theater.name}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {theater.location}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {theater.phone}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {theater.email}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  <button
-                    onClick={() =>
-                      navigate(`/owner/theaters/${theater._id}/shows`)
-                    }
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    Shows
-                  </button>
-                </td>
-                <td className="py-2 px-4 border-b border-gray-200 text-center">
-                  {location.pathname === "/owner/theaters" ? (
-                    <button
-                      onClick={() => handleDeleteTheater(theater._id)}
-                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    >
-                      Delete
-                    </button>
-                  ) : (
-                    <>
-                      <button className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
-                        Approve
-                      </button>
-                      <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                        Reject
-                      </button>
-                    </>
-                  )}
-                </td>
+        <div class="overflow-x-auto">
+          <table className="min-w-full bg-white">
+            <thead>
+              <tr className="border-b-2 border-maroon">
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Name
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Location
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Phone
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Email
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Shows
+                </th>
+                <th className="py-2 px-4 border-b border-gray-200 text-center">
+                  Actions
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {theaters?.map((theater, index) => (
+                <tr key={index}>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {theater.name}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {theater.location}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {theater.phone}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {theater.email}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    <button
+                      onClick={() =>
+                        navigate(`/owner/theaters/${theater._id}/shows`)
+                      }
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                      Shows
+                    </button>
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-center">
+                    {location.pathname === "/owner/theaters" ? (
+                      <button
+                        onClick={() => handleDeleteTheater(theater._id)}
+                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      >
+                        Delete
+                      </button>
+                    ) : (
+                      <>
+                        <button className="bg-lightgold hover:text-white text-maroon font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">
+                          Approve
+                        </button>
+                        <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                          Reject
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Modal

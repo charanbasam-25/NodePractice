@@ -1,3 +1,7 @@
+[build]
+  command = "npm run build"  # Ensure you are using the build script that skips or fixes ESLint warnings
+  publish = "build"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
